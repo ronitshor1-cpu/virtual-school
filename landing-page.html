@@ -1,0 +1,2079 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>בית הספר הוירטואלי | מרחב החדשנות והיצירתיות בחינוך</title>
+    <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
+    <style>
+        @font-face {
+            font-family: 'FBArtishok';
+            src: local('FBArtishok'), local('FB Artishok'), local('FBArtishok-Regular'), local('FB Artishok Regular');
+            font-weight: normal;
+            font-style: normal;
+        }
+        @font-face {
+            font-family: 'FBArtishok';
+            src: local('FBArtishok-Bold'), local('FB Artishok Bold'), local('FBArtishokBold');
+            font-weight: bold;
+            font-style: normal;
+        }
+        :root {
+            --blue: #00AEEF;
+            --blue-dark: #0077B6;
+            --blue-deeper: #023E8A;
+            --orange: #F5A623;
+            --orange-light: #FFD166;
+            --orange-dark: #E8960F;
+            --white: #FFFFFF;
+            --light-bg: #F0F7FF;
+            --gray-50: #F8FAFC;
+            --gray-100: #F1F5F9;
+            --gray-200: #E2E8F0;
+            --gray-300: #CBD5E1;
+            --gray-500: #64748B;
+            --gray-700: #334155;
+            --gray-900: #0F172A;
+            --shadow-sm: 0 1px 3px rgba(0,0,0,0.08);
+            --shadow-md: 0 4px 16px rgba(0,0,0,0.1);
+            --shadow-lg: 0 10px 40px rgba(0,0,0,0.12);
+            --shadow-xl: 0 20px 60px rgba(0,0,0,0.15);
+            --radius: 16px;
+            --radius-sm: 10px;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Heebo', sans-serif;
+            color: var(--gray-900);
+            background: var(--white);
+            overflow-x: hidden;
+            line-height: 1.7;
+        }
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: var(--gray-100); }
+        ::-webkit-scrollbar-thumb { background: var(--blue); border-radius: 4px; }
+
+        /* ===== NAVBAR ===== */
+        .navbar {
+            position: fixed; top: 0; right: 0; left: 0; z-index: 1000;
+            background: rgba(255,255,255,0.92);
+            backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(0,174,239,0.1);
+            transition: all 0.3s ease;
+        }
+        .navbar.scrolled { box-shadow: var(--shadow-md); }
+        .nav-container {
+            max-width: 1300px; margin: 0 auto; padding: 0 40px;
+            display: flex; align-items: center; justify-content: space-between; height: 75px;
+        }
+        .nav-logo { display: flex; align-items: center; gap: 12px; }
+        .nav-logo img { height: 55px; width: auto; }
+        .nav-links { display: flex; align-items: center; gap: 8px; list-style: none; }
+        .nav-links a {
+            text-decoration: none; color: var(--gray-700); font-weight: 500; font-size: 15px;
+            padding: 8px 18px; border-radius: 25px; transition: all 0.3s ease;
+        }
+        .nav-links a:hover, .nav-links a.active { color: var(--blue); background: rgba(0,174,239,0.08); }
+        .nav-cta {
+            background: linear-gradient(135deg, var(--blue), var(--blue-dark)) !important;
+            color: var(--white) !important; padding: 10px 24px !important; font-weight: 600 !important;
+        }
+        .nav-cta:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(0,174,239,0.35); }
+        .nav-admin-btn {
+            background: linear-gradient(135deg, var(--orange), var(--orange-dark)) !important;
+            color: var(--white) !important; padding: 10px 20px !important; font-weight: 600 !important;
+            font-size: 0.85rem !important; display: inline-flex !important; align-items: center; gap: 6px;
+        }
+        .nav-admin-btn:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(245,166,35,0.35); }
+        .mobile-menu-btn { display: none; background: none; border: none; font-size: 24px; color: var(--blue); cursor: pointer; }
+
+        /* Admin toggle button */
+        .admin-toggle {
+            position: fixed; bottom: 30px; right: 30px; z-index: 9999;
+            width: 56px; height: 56px; border-radius: 50%;
+            background: linear-gradient(135deg, var(--orange), var(--orange-dark));
+            color: white; border: none; font-size: 22px; cursor: pointer;
+            box-shadow: var(--shadow-lg); transition: all 0.3s ease;
+            display: flex; align-items: center; justify-content: center;
+        }
+        .admin-toggle:hover { transform: scale(1.1); box-shadow: 0 10px 30px rgba(245,166,35,0.4); }
+
+        /* ===== ADMIN PANEL ===== */
+        .admin-overlay {
+            display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5);
+            z-index: 10000; justify-content: center; align-items: center;
+            backdrop-filter: blur(5px);
+        }
+        .admin-overlay.open { display: flex; }
+        .admin-panel {
+            background: var(--white); width: 90%; max-width: 900px; max-height: 85vh;
+            border-radius: 20px; overflow: hidden; box-shadow: var(--shadow-xl);
+            display: flex; flex-direction: column;
+        }
+        .admin-header {
+            background: linear-gradient(135deg, var(--blue-deeper), var(--blue-dark));
+            color: white; padding: 24px 30px;
+            display: flex; align-items: center; justify-content: space-between;
+        }
+        .admin-header h2 { font-size: 1.4rem; font-weight: 700; display: flex; align-items: center; gap: 10px; }
+        .admin-close { background: rgba(255,255,255,0.15); border: none; color: white; width: 40px; height: 40px; border-radius: 50%; font-size: 18px; cursor: pointer; transition: background 0.3s; }
+        .admin-close:hover { background: rgba(255,255,255,0.3); }
+        .admin-tabs {
+            display: flex; background: var(--gray-50); border-bottom: 1px solid var(--gray-200); overflow-x: auto;
+        }
+        .admin-tab {
+            padding: 14px 24px; font-size: 0.9rem; font-weight: 600; color: var(--gray-500);
+            background: none; border: none; cursor: pointer; white-space: nowrap;
+            border-bottom: 3px solid transparent; transition: all 0.3s; font-family: 'Heebo', sans-serif;
+        }
+        .admin-tab.active, .admin-tab:hover { color: var(--blue); border-bottom-color: var(--blue); background: white; }
+        .admin-body { padding: 30px; overflow-y: auto; flex: 1; }
+        .admin-section { display: none; }
+        .admin-section.active { display: block; }
+        .admin-form-group { margin-bottom: 20px; }
+        .admin-form-group label { display: block; font-size: 0.9rem; font-weight: 600; color: var(--gray-700); margin-bottom: 6px; }
+        .admin-form-group input, .admin-form-group textarea, .admin-form-group select {
+            width: 100%; padding: 12px 16px; border: 2px solid var(--gray-200);
+            border-radius: var(--radius-sm); font-size: 0.95rem; font-family: 'Heebo', sans-serif;
+            color: var(--gray-900); background: var(--white); transition: border-color 0.3s; outline: none;
+        }
+        .admin-form-group input:focus, .admin-form-group textarea:focus { border-color: var(--blue); }
+        .admin-form-group textarea { resize: vertical; min-height: 80px; }
+        .admin-item-card {
+            background: var(--gray-50); border: 1px solid var(--gray-200);
+            border-radius: var(--radius-sm); padding: 18px; margin-bottom: 14px;
+            display: flex; align-items: center; justify-content: space-between; gap: 16px;
+        }
+        .admin-item-card .item-info { flex: 1; }
+        .admin-item-card .item-info h4 { font-size: 1rem; color: var(--gray-900); margin-bottom: 2px; }
+        .admin-item-card .item-info p { font-size: 0.85rem; color: var(--gray-500); }
+        .admin-item-actions { display: flex; gap: 8px; }
+        .admin-btn {
+            padding: 8px 18px; border-radius: 8px; border: none; font-size: 0.85rem;
+            font-weight: 600; cursor: pointer; transition: all 0.3s; font-family: 'Heebo', sans-serif;
+        }
+        .admin-btn-primary { background: var(--blue); color: white; }
+        .admin-btn-primary:hover { background: var(--blue-dark); }
+        .admin-btn-danger { background: #FEE2E2; color: #DC2626; }
+        .admin-btn-danger:hover { background: #FECACA; }
+        .admin-btn-success { background: #D1FAE5; color: #059669; }
+        .admin-btn-success:hover { background: #A7F3D0; }
+        .admin-btn-large {
+            width: 100%; padding: 14px; margin-top: 10px; font-size: 1rem;
+            display: flex; align-items: center; justify-content: center; gap: 8px;
+        }
+        .admin-add-form {
+            background: white; border: 2px dashed var(--blue); border-radius: var(--radius);
+            padding: 24px; margin-top: 20px; display: none;
+        }
+        .admin-add-form.open { display: block; }
+        .admin-form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+        .admin-divider { border: none; border-top: 1px solid var(--gray-200); margin: 20px 0; }
+        .admin-saved-msg {
+            background: #D1FAE5; color: #065F46; padding: 12px 20px; border-radius: 10px;
+            font-weight: 600; text-align: center; margin-top: 16px; display: none;
+            animation: fadeInOut 2s ease forwards;
+        }
+        @keyframes fadeInOut { 0% { opacity: 0; } 10% { opacity: 1; } 80% { opacity: 1; } 100% { opacity: 0; } }
+
+        /* ===== HERO ===== */
+        .hero {
+            min-height: 100vh; display: flex; align-items: center;
+            position: relative; overflow: hidden;
+            background: linear-gradient(160deg, #001D3D 0%, #023E8A 30%, #0077B6 60%, #00AEEF 100%);
+        }
+        .hero::before {
+            content: ''; position: absolute; inset: 0;
+            background: radial-gradient(circle at 20% 80%, rgba(245,166,35,0.15) 0%, transparent 50%),
+                        radial-gradient(circle at 80% 20%, rgba(0,174,239,0.2) 0%, transparent 50%);
+        }
+        .particles { position: absolute; inset: 0; overflow: hidden; }
+        .particle { position: absolute; border-radius: 50%; animation: float-particle linear infinite; opacity: 0.3; }
+        @keyframes float-particle {
+            0% { transform: translateY(100vh) rotate(0deg); opacity: 0; }
+            10% { opacity: 0.3; } 90% { opacity: 0.3; }
+            100% { transform: translateY(-10vh) rotate(720deg); opacity: 0; }
+        }
+        .hero-grid {
+            position: absolute; inset: 0;
+            background-image: linear-gradient(rgba(255,255,255,0.03) 1px, transparent 1px),
+                              linear-gradient(90deg, rgba(255,255,255,0.03) 1px, transparent 1px);
+            background-size: 60px 60px;
+        }
+        .neural-bg {
+            position: absolute; left: -5%; top: 10%; width: 50%; opacity: 0.08;
+            animation: pulse-slow 8s ease-in-out infinite;
+        }
+        @keyframes pulse-slow { 0%,100% { opacity: 0.08; transform: scale(1); } 50% { opacity: 0.12; transform: scale(1.02); } }
+        .hero-content {
+            max-width: 1300px; margin: 0 auto; padding: 120px 40px 80px;
+            display: grid; grid-template-columns: 1fr 1fr; gap: 60px; align-items: center;
+            position: relative; z-index: 2;
+        }
+        .hero-text h1 { font-family: 'FBArtishok', 'Heebo', sans-serif; font-size: 3.2rem; font-weight: 900; color: var(--white); line-height: 1.3; margin-bottom: 20px; }
+        .hero-text h1 span {
+            background: linear-gradient(135deg, var(--orange), var(--orange-light));
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+        }
+        .hero-text p { font-size: 1.2rem; color: rgba(255,255,255,0.8); margin-bottom: 35px; max-width: 520px; line-height: 1.8; }
+        .hero-buttons { display: flex; gap: 16px; flex-wrap: wrap; }
+        .btn-primary {
+            display: inline-flex; align-items: center; gap: 10px;
+            background: linear-gradient(135deg, var(--orange), var(--orange-dark));
+            color: var(--white); padding: 16px 36px; border-radius: 50px;
+            text-decoration: none; font-weight: 700; font-size: 1.05rem;
+            transition: all 0.3s ease; border: none; cursor: pointer;
+        }
+        .btn-primary:hover { transform: translateY(-3px); box-shadow: 0 10px 30px rgba(245,166,35,0.4); }
+        .btn-secondary {
+            display: inline-flex; align-items: center; gap: 10px;
+            background: rgba(255,255,255,0.1); backdrop-filter: blur(10px);
+            color: var(--white); padding: 16px 36px; border-radius: 50px;
+            text-decoration: none; font-weight: 600; font-size: 1.05rem;
+            transition: all 0.3s ease; border: 1px solid rgba(255,255,255,0.25);
+        }
+        .btn-secondary:hover { background: rgba(255,255,255,0.2); transform: translateY(-3px); }
+        .hero-visual { display: flex; justify-content: center; align-items: center; position: relative; }
+        .hero-illustration { width: 100%; max-width: 520px; position: relative; }
+        @keyframes float { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-15px); } }
+        .hero-image-wrapper {
+            position: relative;
+            width: 100%;
+            max-width: 500px;
+            aspect-ratio: 1;
+            border-radius: 30% 70% 70% 30% / 30% 30% 70% 70%;
+            overflow: hidden;
+            animation: morph 8s ease-in-out infinite, float 6s ease-in-out infinite;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3), 0 0 80px rgba(0,174,239,0.2);
+        }
+        .hero-image-wrapper img {
+            width: 100%; height: 100%; object-fit: cover;
+        }
+        .hero-image-wrapper::after {
+            content: '';
+            position: absolute; inset: 0;
+            background: linear-gradient(135deg, rgba(0,174,239,0.25) 0%, rgba(245,166,35,0.15) 50%, transparent 100%);
+            mix-blend-mode: overlay;
+        }
+        @keyframes morph {
+            0%,100% { border-radius: 30% 70% 70% 30% / 30% 30% 70% 70%; }
+            25% { border-radius: 58% 42% 40% 60% / 50% 36% 64% 50%; }
+            50% { border-radius: 50% 50% 33% 67% / 55% 27% 73% 45%; }
+            75% { border-radius: 33% 67% 58% 42% / 63% 68% 32% 37%; }
+        }
+
+        /* ===== DASHBOARD ===== */
+        .dashboard {
+            padding: 80px 40px 60px;
+            background: var(--white);
+            position: relative;
+            z-index: 3;
+            margin-top: -60px;
+        }
+        .dashboard-container {
+            max-width: 1200px; margin: 0 auto;
+        }
+        .dashboard-title {
+            text-align: center; margin-bottom: 40px;
+        }
+        .dashboard-title h2 {
+            font-size: 2rem; font-weight: 800; color: var(--gray-900);
+        }
+        .dashboard-title p {
+            font-size: 1rem; color: var(--gray-500); margin-top: 8px;
+        }
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 24px;
+        }
+        .dash-card {
+            background: var(--white);
+            border-radius: var(--radius);
+            overflow: hidden;
+            box-shadow: var(--shadow-md);
+            transition: all 0.4s ease;
+            cursor: pointer;
+            text-decoration: none;
+            color: inherit;
+            position: relative;
+        }
+        .dash-card:hover {
+            transform: translateY(-10px);
+            box-shadow: var(--shadow-xl);
+        }
+        .dash-card-img {
+            height: 180px;
+            position: relative;
+            overflow: hidden;
+            background-size: cover;
+            background-position: center;
+        }
+        .dash-card-img::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(to top, rgba(0,0,0,0.6) 0%, rgba(0,0,0,0.1) 60%, rgba(0,0,0,0) 100%);
+        }
+        .dash-card-img .dash-icon {
+            position: absolute;
+            top: 16px;
+            right: 16px;
+            width: 50px; height: 50px;
+            border-radius: 14px;
+            background: rgba(255,255,255,0.2);
+            backdrop-filter: blur(10px);
+            display: flex; align-items: center; justify-content: center;
+            font-size: 22px; color: white;
+            z-index: 2;
+        }
+        .dash-card-img .dash-number {
+            position: absolute;
+            bottom: 14px;
+            left: 16px;
+            background: rgba(0,174,239,0.9);
+            color: white;
+            padding: 4px 14px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            z-index: 2;
+        }
+        .dash-card-body {
+            padding: 22px 24px;
+        }
+        .dash-card-body h3 {
+            font-size: 1.15rem; font-weight: 700; color: var(--gray-900); margin-bottom: 6px;
+        }
+        .dash-card-body p {
+            font-size: 0.88rem; color: var(--gray-500); line-height: 1.6;
+        }
+        .dash-card-body .dash-link {
+            display: inline-flex; align-items: center; gap: 6px;
+            color: var(--blue); font-weight: 600; font-size: 0.9rem;
+            margin-top: 12px; transition: gap 0.3s;
+        }
+        .dash-card:hover .dash-link { gap: 12px; }
+
+        /* ===== SECTIONS GENERAL ===== */
+        .section { padding: 100px 40px; }
+        .section-header { text-align: center; margin-bottom: 60px; }
+        .section-tag {
+            display: inline-flex; align-items: center; gap: 8px;
+            background: rgba(0,174,239,0.08); color: var(--blue);
+            padding: 8px 20px; border-radius: 25px; font-size: 0.9rem; font-weight: 600; margin-bottom: 16px;
+        }
+        .section-header h2 { font-size: 2.4rem; font-weight: 800; color: var(--gray-900); margin-bottom: 16px; }
+        .section-header p { font-size: 1.1rem; color: var(--gray-500); max-width: 650px; margin: 0 auto; }
+        .container { max-width: 1200px; margin: 0 auto; }
+
+        /* ===== GOALS SECTION ===== */
+        #goals { background: var(--white); }
+        .goals-layout { display: grid; grid-template-columns: 1fr 1fr; gap: 50px; align-items: start; }
+        .goals-images-stack { display: flex; flex-direction: column; gap: 20px; }
+        .goals-image {
+            border-radius: var(--radius);
+            overflow: hidden;
+            height: 200px;
+            position: relative;
+        }
+        .goals-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+        }
+        .goals-image::after {
+            content: '';
+            position: absolute; inset: 0;
+            background: linear-gradient(135deg, rgba(0,174,239,0.15), rgba(245,166,35,0.08));
+        }
+        .goals-grid { display: grid; grid-template-columns: 1fr; gap: 20px; }
+        .goal-card {
+            background: var(--white); border: 1px solid var(--gray-200);
+            border-radius: var(--radius-sm); padding: 24px; transition: all 0.4s ease;
+            display: flex; gap: 18px; align-items: flex-start;
+        }
+        .goal-card:hover { border-color: var(--blue); box-shadow: var(--shadow-md); transform: translateX(-6px); }
+        .goal-icon {
+            width: 50px; height: 50px; border-radius: 14px; flex-shrink: 0;
+            display: flex; align-items: center; justify-content: center; font-size: 22px;
+        }
+        .goal-card:nth-child(1) .goal-icon { background: rgba(0,174,239,0.1); color: var(--blue); }
+        .goal-card:nth-child(2) .goal-icon { background: rgba(245,166,35,0.1); color: var(--orange); }
+        .goal-card:nth-child(3) .goal-icon { background: rgba(16,185,129,0.1); color: #10B981; }
+        .goal-card:nth-child(4) .goal-icon { background: rgba(139,92,246,0.1); color: #8B5CF6; }
+        .goal-card:nth-child(5) .goal-icon { background: rgba(236,72,153,0.1); color: #EC4899; }
+        .goal-card:nth-child(6) .goal-icon { background: rgba(59,130,246,0.1); color: #3B82F6; }
+        .goal-text h3 { font-size: 1.05rem; font-weight: 700; margin-bottom: 4px; color: var(--gray-900); }
+        .goal-text p { font-size: 0.9rem; color: var(--gray-500); line-height: 1.6; }
+
+        /* ===== WORKSHOPS SECTION ===== */
+        #workshops { background: var(--light-bg); }
+        .workshops-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 28px; }
+        .workshop-card {
+            background: var(--white); border-radius: var(--radius);
+            overflow: hidden; box-shadow: var(--shadow-sm); transition: all 0.4s ease; cursor: pointer;
+        }
+        .workshop-card:hover { transform: translateY(-8px); box-shadow: var(--shadow-xl); }
+        .workshop-image {
+            height: 200px; position: relative; overflow: hidden;
+            background-size: cover; background-position: center;
+        }
+        .workshop-image .overlay {
+            position: absolute; inset: 0;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 3rem; color: white;
+            background: rgba(0,0,0,0.15);
+        }
+        .workshop-badge {
+            position: absolute; top: 16px; right: 16px;
+            background: rgba(255,255,255,0.2); backdrop-filter: blur(10px);
+            color: white; padding: 6px 14px; border-radius: 20px;
+            font-size: 0.8rem; font-weight: 600; z-index: 2;
+        }
+        .workshop-body { padding: 28px; }
+        .workshop-body h3 { font-size: 1.15rem; font-weight: 700; margin-bottom: 10px; color: var(--gray-900); }
+        .workshop-body p { font-size: 0.9rem; color: var(--gray-500); margin-bottom: 18px; line-height: 1.7; }
+        .workshop-meta {
+            display: flex; align-items: center; justify-content: space-between;
+            padding-top: 16px; border-top: 1px solid var(--gray-100);
+        }
+        .workshop-meta span { display: flex; align-items: center; gap: 6px; font-size: 0.85rem; color: var(--gray-500); }
+        .workshop-meta .register-btn {
+            background: linear-gradient(135deg, var(--blue), var(--blue-dark));
+            color: white; padding: 8px 20px; border-radius: 20px; text-decoration: none;
+            font-size: 0.85rem; font-weight: 600; transition: all 0.3s ease; border: none; cursor: pointer;
+        }
+        .workshop-meta .register-btn:hover { transform: translateY(-2px); box-shadow: 0 4px 15px rgba(0,174,239,0.3); }
+
+        /* ===== LIBRARY SECTION ===== */
+        #library { background: var(--white); }
+        .library-tabs { display: flex; justify-content: center; gap: 12px; margin-bottom: 40px; flex-wrap: wrap; }
+        .tab-btn {
+            padding: 10px 28px; border-radius: 25px; border: 2px solid var(--gray-200);
+            background: var(--white); color: var(--gray-500); font-weight: 600;
+            font-size: 0.95rem; cursor: pointer; transition: all 0.3s ease; font-family: 'Heebo', sans-serif;
+        }
+        .tab-btn.active, .tab-btn:hover { border-color: var(--blue); color: var(--blue); background: rgba(0,174,239,0.05); }
+        .library-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 24px; }
+        .library-item {
+            background: var(--gray-50); border-radius: var(--radius-sm); padding: 28px;
+            text-align: center; transition: all 0.3s ease; cursor: pointer; border: 1px solid transparent;
+        }
+        .library-item:hover { background: var(--white); border-color: var(--blue); box-shadow: var(--shadow-md); transform: translateY(-4px); }
+        .library-item .file-icon {
+            width: 60px; height: 60px; border-radius: 14px;
+            display: flex; align-items: center; justify-content: center;
+            margin: 0 auto 16px; font-size: 24px;
+        }
+        .library-item:nth-child(odd) .file-icon { background: rgba(0,174,239,0.1); color: var(--blue); }
+        .library-item:nth-child(even) .file-icon { background: rgba(245,166,35,0.1); color: var(--orange); }
+        .library-item h4 { font-size: 0.95rem; font-weight: 600; color: var(--gray-900); margin-bottom: 6px; }
+        .library-item .file-type { font-size: 0.8rem; color: var(--gray-500); }
+
+        /* ===== INNOVATION SECTION ===== */
+        #innovation {
+            background: linear-gradient(160deg, #001D3D, #023E8A);
+            color: var(--white); position: relative; overflow: hidden;
+        }
+        #innovation::before {
+            content: ''; position: absolute; inset: 0;
+            background: radial-gradient(circle at 10% 90%, rgba(245,166,35,0.1) 0%, transparent 40%),
+                        radial-gradient(circle at 90% 10%, rgba(0,174,239,0.15) 0%, transparent 40%);
+        }
+        #innovation .section-tag { background: rgba(255,255,255,0.1); color: var(--orange-light); }
+        #innovation .section-header h2 { color: var(--white); }
+        #innovation .section-header p { color: rgba(255,255,255,0.7); }
+        .innovation-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 28px; position: relative; z-index: 1; }
+        .innovation-card {
+            background: rgba(255,255,255,0.06); backdrop-filter: blur(10px);
+            border: 1px solid rgba(255,255,255,0.1); border-radius: var(--radius);
+            overflow: hidden; transition: all 0.4s ease;
+        }
+        .innovation-card:hover { background: rgba(255,255,255,0.1); border-color: rgba(255,255,255,0.2); transform: translateY(-5px); }
+        .innovation-card-img {
+            height: 180px;
+            background-size: cover; background-position: center;
+            position: relative;
+        }
+        .innovation-card-img::after {
+            content: '';
+            position: absolute; inset: 0;
+            background: linear-gradient(to top, rgba(0,29,61,0.8) 0%, rgba(0,29,61,0.2) 100%);
+        }
+        .innovation-card-body { padding: 28px; }
+        .innovation-card .card-label {
+            display: inline-block; background: rgba(245,166,35,0.2); color: var(--orange-light);
+            padding: 4px 14px; border-radius: 15px; font-size: 0.8rem; font-weight: 600; margin-bottom: 12px;
+        }
+        .innovation-card h3 { font-size: 1.2rem; font-weight: 700; margin-bottom: 10px; }
+        .innovation-card p { font-size: 0.95rem; color: rgba(255,255,255,0.7); line-height: 1.7; }
+        .innovation-card .read-more {
+            display: inline-flex; align-items: center; gap: 8px;
+            color: var(--orange-light); text-decoration: none; font-weight: 600; font-size: 0.9rem;
+            margin-top: 14px; transition: gap 0.3s ease;
+        }
+        .innovation-card .read-more:hover { gap: 14px; }
+
+        /* ===== VOICES SECTION ===== */
+        #voices { background: var(--light-bg); }
+        .voices-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 28px; }
+        .voice-card {
+            background: var(--white); border-radius: var(--radius); padding: 36px;
+            box-shadow: var(--shadow-sm); transition: all 0.3s ease;
+        }
+        .voice-card:hover { transform: translateY(-5px); box-shadow: var(--shadow-lg); }
+        .voice-card .quote-icon { font-size: 2.5rem; color: rgba(0,174,239,0.15); margin-bottom: 12px; line-height: 1; }
+        .voice-card blockquote { font-size: 1rem; color: var(--gray-700); line-height: 1.8; margin-bottom: 20px; font-style: italic; }
+        .voice-author { display: flex; align-items: center; gap: 14px; padding-top: 18px; border-top: 1px solid var(--gray-100); }
+        .voice-avatar {
+            width: 48px; height: 48px; border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            font-weight: 700; font-size: 1.1rem; color: white;
+        }
+        .voice-card:nth-child(1) .voice-avatar { background: linear-gradient(135deg, var(--blue), var(--blue-dark)); }
+        .voice-card:nth-child(2) .voice-avatar { background: linear-gradient(135deg, var(--orange), var(--orange-dark)); }
+        .voice-card:nth-child(3) .voice-avatar { background: linear-gradient(135deg, #7C3AED, #5B21B6); }
+        .voice-author-info strong { display: block; font-size: 0.95rem; color: var(--gray-900); }
+        .voice-author-info span { font-size: 0.85rem; color: var(--gray-500); }
+
+        /* ===== CONTACT SECTION ===== */
+        #contact { background: var(--white); }
+        .contact-wrapper { display: grid; grid-template-columns: 1fr 1fr; gap: 60px; align-items: start; }
+        .contact-info h3 { font-size: 1.8rem; font-weight: 800; color: var(--gray-900); margin-bottom: 16px; }
+        .contact-info > p { font-size: 1rem; color: var(--gray-500); margin-bottom: 30px; line-height: 1.7; }
+        .contact-details { display: flex; flex-direction: column; gap: 20px; }
+        .contact-detail { display: flex; align-items: center; gap: 16px; }
+        .contact-detail .detail-icon {
+            width: 48px; height: 48px; border-radius: 14px;
+            background: rgba(0,174,239,0.08); color: var(--blue);
+            display: flex; align-items: center; justify-content: center; font-size: 18px; flex-shrink: 0;
+        }
+        .contact-detail span { font-size: 0.95rem; color: var(--gray-700); font-weight: 500; }
+        .contact-form-card {
+            background: var(--gray-50); border-radius: var(--radius);
+            padding: 40px; border: 1px solid var(--gray-200);
+        }
+        .contact-form-card h4 { font-size: 1.3rem; font-weight: 700; margin-bottom: 8px; color: var(--gray-900); }
+        .contact-form-card > p { font-size: 0.9rem; color: var(--gray-500); margin-bottom: 28px; }
+        .form-group { margin-bottom: 18px; }
+        .form-group label { display: block; font-size: 0.9rem; font-weight: 600; color: var(--gray-700); margin-bottom: 6px; }
+        .form-group input, .form-group select, .form-group textarea {
+            width: 100%; padding: 12px 16px; border: 2px solid var(--gray-200);
+            border-radius: var(--radius-sm); font-size: 0.95rem; font-family: 'Heebo', sans-serif;
+            color: var(--gray-900); background: var(--white); transition: border-color 0.3s ease; outline: none;
+        }
+        .form-group input:focus, .form-group select:focus, .form-group textarea:focus { border-color: var(--blue); }
+        .form-group textarea { resize: vertical; min-height: 100px; }
+        .checkbox-group { display: flex; gap: 12px; flex-wrap: wrap; }
+        .checkbox-label {
+            display: flex; align-items: center; gap: 6px; padding: 8px 16px;
+            border: 1px solid var(--gray-200); border-radius: 8px; cursor: pointer;
+            font-size: 0.95rem; transition: all 0.3s ease; user-select: none;
+        }
+        .checkbox-label:hover { border-color: var(--blue); background: rgba(0,174,239,0.05); }
+        .checkbox-label:has(input:checked) { border-color: var(--blue); background: rgba(0,174,239,0.1); color: var(--blue-dark); font-weight: 600; }
+        .checkbox-label input { accent-color: var(--blue); width: 16px; height: 16px; cursor: pointer; }
+        .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+        .submit-btn {
+            width: 100%; padding: 14px;
+            background: linear-gradient(135deg, var(--blue), var(--blue-dark));
+            color: var(--white); border: none; border-radius: var(--radius-sm);
+            font-size: 1rem; font-weight: 700; font-family: 'Heebo', sans-serif;
+            cursor: pointer; transition: all 0.3s ease;
+            display: flex; align-items: center; justify-content: center; gap: 10px;
+        }
+        .submit-btn:hover { transform: translateY(-2px); box-shadow: 0 8px 25px rgba(0,174,239,0.3); }
+
+        /* ===== FOOTER ===== */
+        .footer { background: var(--gray-900); color: rgba(255,255,255,0.7); padding: 60px 40px 30px; }
+        .footer-content {
+            max-width: 1200px; margin: 0 auto;
+            display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 40px;
+            padding-bottom: 40px; border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+        .footer-brand p { font-size: 0.9rem; line-height: 1.8; margin-top: 16px; }
+        .footer-links h4 { color: var(--white); font-size: 1rem; font-weight: 700; margin-bottom: 18px; }
+        .footer-links ul { list-style: none; }
+        .footer-links li { margin-bottom: 10px; }
+        .footer-links a { color: rgba(255,255,255,0.6); text-decoration: none; font-size: 0.9rem; transition: color 0.3s ease; }
+        .footer-links a:hover { color: var(--orange-light); }
+        .footer-bottom {
+            max-width: 1200px; margin: 0 auto; padding-top: 25px;
+            display: flex; align-items: center; justify-content: space-between;
+        }
+        .footer-bottom p { font-size: 0.85rem; }
+        .social-links { display: flex; gap: 12px; }
+        .social-links a {
+            width: 40px; height: 40px; border-radius: 50%;
+            background: rgba(255,255,255,0.08);
+            display: flex; align-items: center; justify-content: center;
+            color: rgba(255,255,255,0.7); text-decoration: none; font-size: 16px; transition: all 0.3s ease;
+        }
+        .social-links a:hover { background: var(--blue); color: var(--white); transform: translateY(-3px); }
+
+        /* ===== SCROLL TOP ===== */
+        .scroll-top {
+            position: fixed; bottom: 30px; left: 30px; width: 50px; height: 50px; border-radius: 50%;
+            background: linear-gradient(135deg, var(--blue), var(--blue-dark));
+            color: white; border: none; font-size: 20px; cursor: pointer;
+            display: flex; align-items: center; justify-content: center;
+            box-shadow: var(--shadow-md); opacity: 0; visibility: hidden;
+            transition: all 0.3s ease; z-index: 999;
+        }
+        .scroll-top.visible { opacity: 1; visibility: visible; }
+        .scroll-top:hover { transform: translateY(-4px); box-shadow: var(--shadow-lg); }
+
+        /* ===== ANIMATIONS ===== */
+        .fade-in { opacity: 0; transform: translateY(30px); transition: opacity 0.6s ease, transform 0.6s ease; }
+        .fade-in.visible { opacity: 1; transform: translateY(0); }
+
+        /* ===== RESPONSIVE ===== */
+        @media (max-width: 1024px) {
+            .hero-content { grid-template-columns: 1fr; text-align: center; padding: 100px 30px 60px; gap: 30px; }
+            .hero-text p { margin: 0 auto 35px; }
+            .hero-buttons { justify-content: center; }
+            .hero-visual { order: -1; }
+            .hero-image-wrapper { max-width: 280px; margin: 0 auto; }
+            .dashboard-grid { grid-template-columns: repeat(2, 1fr); }
+            .goals-layout { grid-template-columns: 1fr; }
+            .goals-images-stack { flex-direction: row; }
+            .goals-image { height: 220px; flex: 1; }
+            .workshops-grid { grid-template-columns: repeat(2, 1fr); }
+            .voices-grid { grid-template-columns: repeat(2, 1fr); }
+            .library-grid { grid-template-columns: repeat(3, 1fr); }
+            .innovation-grid { grid-template-columns: 1fr; }
+            .contact-wrapper { grid-template-columns: 1fr; }
+            .footer-content { grid-template-columns: 1fr 1fr; }
+            .rationale-content { padding: 0 10px; }
+        }
+        @media (max-width: 768px) {
+            .nav-links { display: none; }
+            .mobile-menu-btn { display: block; }
+            .nav-container { padding: 0 16px; height: 65px; }
+            .nav-logo img { height: 42px; }
+
+            .hero { min-height: auto; padding-bottom: 40px; }
+            .hero-content { padding: 90px 20px 40px; gap: 24px; }
+            .hero-text h1 { font-size: 1.8rem; line-height: 1.4; }
+            .hero-text p { font-size: 1rem; margin-bottom: 24px; line-height: 1.7; }
+            .hero-buttons { flex-direction: column; align-items: center; gap: 12px; }
+            .btn-primary, .btn-secondary { width: 100%; max-width: 280px; justify-content: center; padding: 14px 28px; font-size: 0.95rem; }
+            .hero-image-wrapper { max-width: 200px; }
+
+            .section { padding: 50px 16px; }
+            .section-header { margin-bottom: 36px; }
+            .section-header h2 { font-size: 1.5rem; }
+            .section-header p { font-size: 0.95rem; }
+            .section-tag { font-size: 0.8rem; padding: 6px 14px; }
+
+            .dashboard { padding: 40px 16px 30px; margin-top: -30px; }
+            .dashboard-title h2 { font-size: 1.4rem; }
+            .dashboard-grid { grid-template-columns: 1fr; gap: 16px; }
+            .dash-card-img { height: 140px; }
+            .dash-card-body { padding: 16px 18px; }
+            .dash-card-body h3 { font-size: 1.05rem; }
+
+            .rationale-content { font-size: 0.95rem; line-height: 1.8; }
+
+            .goals-images-stack { flex-direction: column; }
+            .goals-image { height: 180px; }
+            .goals-grid { gap: 14px; }
+            .goal-card { padding: 18px; gap: 14px; }
+            .goal-icon { width: 42px; height: 42px; font-size: 18px; border-radius: 12px; }
+            .goal-text h3 { font-size: 0.95rem; }
+            .goal-text p { font-size: 0.85rem; }
+
+            .workshops-grid { grid-template-columns: 1fr; gap: 20px; }
+            .workshop-image { height: 170px; }
+            .workshop-body { padding: 20px; }
+            .workshop-body h3 { font-size: 1.05rem; }
+            .workshop-body p { font-size: 0.85rem; }
+
+            .library-grid { grid-template-columns: repeat(2, 1fr); gap: 14px; }
+            .library-item { padding: 20px 14px; }
+            .library-item .file-icon { width: 48px; height: 48px; font-size: 20px; }
+            .library-item h4 { font-size: 0.85rem; }
+            .library-tabs { gap: 8px; }
+            .tab-btn { padding: 8px 16px; font-size: 0.85rem; }
+
+            .innovation-grid { grid-template-columns: 1fr; gap: 20px; }
+            .innovation-card-img { height: 150px; }
+            .innovation-card-body { padding: 20px; }
+
+            .voices-grid { grid-template-columns: 1fr; gap: 20px; }
+            .voice-card { padding: 24px; }
+            .voice-card blockquote { font-size: 0.9rem; }
+
+            .contact-wrapper { grid-template-columns: 1fr; gap: 30px; }
+            .contact-info h3 { font-size: 1.4rem; }
+            .contact-form-card { padding: 24px; }
+            .form-row, .admin-form-row { grid-template-columns: 1fr; }
+
+            .footer { padding: 40px 16px 24px; }
+            .footer-content { grid-template-columns: 1fr; gap: 24px; padding-bottom: 24px; }
+            .footer-bottom { flex-direction: column; gap: 16px; text-align: center; }
+
+            .admin-toggle { width: 48px; height: 48px; font-size: 18px; bottom: 20px; right: 20px; }
+            .admin-panel { width: 98%; max-height: 90vh; border-radius: 14px; }
+            .admin-header { padding: 18px 20px; }
+            .admin-header h2 { font-size: 1.1rem; }
+            .admin-body { padding: 20px; }
+            .admin-tabs { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+            .admin-tab { padding: 12px 16px; font-size: 0.8rem; }
+
+            .scroll-top { width: 42px; height: 42px; font-size: 16px; bottom: 20px; left: 20px; }
+        }
+
+        /* Extra small phones */
+        @media (max-width: 400px) {
+            .hero-text h1 { font-size: 1.5rem; }
+            .hero-image-wrapper { max-width: 160px; }
+            .dashboard-title h2 { font-size: 1.2rem; }
+            .section-header h2 { font-size: 1.3rem; }
+            .library-grid { grid-template-columns: 1fr; }
+            .dash-card-body h3 { font-size: 0.95rem; }
+        }
+
+        .mobile-nav { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 2000; }
+        .mobile-nav.open { display: block; }
+        .mobile-nav-content {
+            position: absolute; top: 0; right: 0; width: 280px; height: 100%;
+            background: var(--white); padding: 80px 24px 30px; box-shadow: var(--shadow-xl);
+            overflow-y: auto; -webkit-overflow-scrolling: touch;
+        }
+        .mobile-nav-close {
+            position: absolute; top: 20px; left: 20px; background: none;
+            border: none; font-size: 24px; color: var(--gray-700); cursor: pointer;
+        }
+        .mobile-nav-content a {
+            display: block; padding: 14px 0; color: var(--gray-700);
+            text-decoration: none; font-weight: 500; font-size: 1.05rem;
+            border-bottom: 1px solid var(--gray-100);
+        }
+        .mobile-nav-content a:hover { color: var(--blue); }
+    </style>
+</head>
+<body>
+
+<!-- ===== NAVBAR ===== -->
+<nav class="navbar" id="navbar">
+    <div class="nav-container">
+        <div class="nav-logo">
+            <img src="logo.png" alt="מרחב החדשנות מחוז צפון" style="height:55px; width:auto;" onerror="this.style.display='none'">
+        </div>
+        <ul class="nav-links">
+            <li><a href="#home" class="active">בית</a></li>
+            <li><a href="#rationale">רציונל</a></li>
+            <li><a href="#goals">מטרות</a></li>
+            <li><a href="#workshops">סדנאות</a></li>
+            <li><a href="#library">ספריית תוכן</a></li>
+            <li><a href="#innovation">חדשנות חינוכית</a></li>
+            <li><a href="#voices">קולות מהשטח</a></li>
+            <li><a href="#contact" class="nav-cta">הרשמה</a></li>
+            <li><a href="#" onclick="event.preventDefault(); openAdmin();" class="nav-admin-btn"><i class="fas fa-lock"></i> כניסת מנהל</a></li>
+        </ul>
+        <button class="mobile-menu-btn" onclick="toggleMobileNav()"><i class="fas fa-bars"></i></button>
+    </div>
+</nav>
+
+<!-- Mobile Nav -->
+<div class="mobile-nav" id="mobileNav" onclick="closeMobileNav()">
+    <div class="mobile-nav-content" onclick="event.stopPropagation()">
+        <button class="mobile-nav-close" onclick="closeMobileNav()"><i class="fas fa-times"></i></button>
+        <a href="#home" onclick="closeMobileNav()">בית</a>
+        <a href="#rationale" onclick="closeMobileNav()">רציונל</a>
+        <a href="#goals" onclick="closeMobileNav()">מטרות</a>
+        <a href="#workshops" onclick="closeMobileNav()">סדנאות</a>
+        <a href="#library" onclick="closeMobileNav()">ספריית תוכן</a>
+        <a href="#innovation" onclick="closeMobileNav()">חדשנות חינוכית</a>
+        <a href="#voices" onclick="closeMobileNav()">קולות מהשטח</a>
+        <a href="#contact" onclick="closeMobileNav()">הרשמה</a>
+        <a href="#" onclick="event.preventDefault(); closeMobileNav(); openAdmin();" style="color:var(--orange); font-weight:700;"><i class="fas fa-lock"></i> כניסת מנהל</a>
+    </div>
+</div>
+
+<!-- ===== HERO ===== -->
+<section class="hero" id="home">
+    <div class="hero-grid"></div>
+    <div class="particles" id="particles"></div>
+    <svg class="neural-bg" viewBox="0 0 600 600" xmlns="http://www.w3.org/2000/svg">
+        <circle cx="100" cy="100" r="6" fill="white"/><circle cx="200" cy="300" r="6" fill="white"/>
+        <circle cx="400" cy="150" r="6" fill="white"/><circle cx="500" cy="400" r="6" fill="white"/>
+        <circle cx="300" cy="500" r="6" fill="white"/><circle cx="150" cy="450" r="6" fill="white"/>
+        <circle cx="450" cy="280" r="6" fill="white"/>
+        <line x1="100" y1="100" x2="200" y2="300" stroke="white" stroke-width="1" opacity="0.5"/>
+        <line x1="200" y1="300" x2="400" y2="150" stroke="white" stroke-width="1" opacity="0.5"/>
+        <line x1="400" y1="150" x2="500" y2="400" stroke="white" stroke-width="1" opacity="0.5"/>
+        <line x1="300" y1="500" x2="150" y2="450" stroke="white" stroke-width="1" opacity="0.5"/>
+        <line x1="150" y1="450" x2="100" y2="100" stroke="white" stroke-width="1" opacity="0.5"/>
+        <line x1="450" y1="280" x2="200" y2="300" stroke="white" stroke-width="1" opacity="0.5"/>
+        <line x1="300" y1="500" x2="500" y2="400" stroke="white" stroke-width="1" opacity="0.5"/>
+    </svg>
+    <div class="hero-content">
+        <div class="hero-text">
+            <h1>בית הספר <span>הוירטואלי</span><br>של מרחב החדשנות</h1>
+            <p>מרחב למידה דיגיטלי חדשני המפגיש בין טכנולוגיה, חשיבה יצירתית ובינה מלאכותית. הצטרפו למסע שיעצב את עתיד החינוך.</p>
+            <div class="hero-buttons">
+                <a href="#workshops" class="btn-primary"><i class="fas fa-rocket"></i> לסדנאות שלנו</a>
+                <a href="#rationale" class="btn-secondary"><i class="fas fa-scroll"></i> הרציונל שלנו</a>
+            </div>
+        </div>
+        <div class="hero-visual">
+            <div class="hero-illustration">
+                <div class="hero-image-wrapper">
+                    <img src="main.png" alt="חדשנות בחינוך">
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ===== DASHBOARD ===== -->
+<section class="dashboard" id="dashboard">
+    <div class="dashboard-container">
+        <div class="dashboard-title fade-in">
+            <h2>ברוכים הבאים לבית הספר הוירטואלי של מרחב החדשנות</h2>
+            <p>בחרו את היעד שלכם וצאו לדרך</p>
+        </div>
+        <div class="dashboard-grid" id="dashboardGrid">
+            <a href="#goals" class="dash-card fade-in">
+                <div class="dash-card-img" style="background-image: url('1.png');">
+                    <div class="dash-icon"><i class="fas fa-bullseye"></i></div>
+                </div>
+                <div class="dash-card-body">
+                    <h3>בית הספר הוירטואלי - מטרות</h3>
+                    <p>החזון, המשימה והיעדים של מרחב החדשנות החינוכי</p>
+                    <span class="dash-link">גלו עוד <i class="fas fa-arrow-left"></i></span>
+                </div>
+            </a>
+            <a href="#workshops" class="dash-card fade-in">
+                <div class="dash-card-img" style="background-image: url('5.png');">
+                    <div class="dash-icon"><i class="fas fa-flask"></i></div>
+                    <span class="dash-number">4 סדנאות פעילות</span>
+                </div>
+                <div class="dash-card-body">
+                    <h3>סדנאות</h3>
+                    <p>סדנאות מעשיות בנושאי AI, חשיבה עיצובית, גיימיפיקציה ועוד</p>
+                    <span class="dash-link">לרשימת הסדנאות <i class="fas fa-arrow-left"></i></span>
+                </div>
+            </a>
+            <a href="#library" class="dash-card fade-in">
+                <div class="dash-card-img" style="background-image: url('3.png');">
+                    <div class="dash-icon"><i class="fas fa-book-open"></i></div>
+                    <span class="dash-number">120+ פריטים</span>
+                </div>
+                <div class="dash-card-body">
+                    <h3>ספריית תוכן</h3>
+                    <p>מערכי שיעור, מצגות ומדריכים מוכנים לשימוש</p>
+                    <span class="dash-link">לספרייה <i class="fas fa-arrow-left"></i></span>
+                </div>
+            </a>
+            <a href="#innovation" class="dash-card fade-in">
+                <div class="dash-card-img" style="background-image: url('2.png');">
+                    <div class="dash-icon"><i class="fas fa-globe"></i></div>
+                </div>
+                <div class="dash-card-body">
+                    <h3>חדשנות חינוכית</h3>
+                    <p>חדש בארץ ובעולם - מגמות, מחקרים וטכנולוגיות</p>
+                    <span class="dash-link">לחדשנות <i class="fas fa-arrow-left"></i></span>
+                </div>
+            </a>
+            <a href="#voices" class="dash-card fade-in">
+                <div class="dash-card-img" style="background-image: url('6.png');">
+                    <div class="dash-icon"><i class="fas fa-comments"></i></div>
+                </div>
+                <div class="dash-card-body">
+                    <h3>קולות מהשטח</h3>
+                    <p>חוויות, תובנות וסיפורי הצלחה מאנשי חינוך</p>
+                    <span class="dash-link">לעדויות <i class="fas fa-arrow-left"></i></span>
+                </div>
+            </a>
+            <a href="#contact" class="dash-card fade-in">
+                <div class="dash-card-img" style="background-image: url('4.png');">
+                    <div class="dash-icon"><i class="fas fa-paper-plane"></i></div>
+                </div>
+                <div class="dash-card-body">
+                    <h3>הרשמה ויצירת קשר</h3>
+                    <p>הירשמו לסדנאות או צרו קשר עם הצוות שלנו</p>
+                    <span class="dash-link">לטופס ההרשמה <i class="fas fa-arrow-left"></i></span>
+                </div>
+            </a>
+        </div>
+    </div>
+</section>
+
+<!-- ===== RATIONALE SECTION ===== -->
+<section class="section" id="rationale" style="background: var(--light-bg);">
+    <div class="container">
+        <div class="section-header fade-in">
+            <div class="section-tag"><i class="fas fa-scroll"></i> רציונל</div>
+            <h2>מוכנות מתמשכת ולא תגובת חירום</h2>
+            <p>בית הספר הוירטואלי של מרחב החדשנות — מנגנון אסטרטגי תומך למערכת החינוך</p>
+        </div>
+        <div class="rationale-content fade-in" style="max-width: 900px; margin: 0 auto; font-size: 1.05rem; color: var(--gray-700); line-height: 2;">
+            <p style="margin-bottom: 20px;">בעידן של מציאות משתנה ואי־ודאות מתמשכת — הכוללת מצבי חירום, מעבר ללמידה מרחוק, שינויים תכופים במבנה הלמידה ואתגרים מערכתיים — מערכת החינוך נדרשת לפעול בגמישות, במהירות ובחדשנות.</p>
+            <p style="margin-bottom: 20px;">בית הספר הוירטואלי של מרחב החדשנות מהווה <strong>מנגנון אסטרטגי תומך</strong>, המאפשר למוסדות חינוך ולצוותי הוראה להמשיך לפעול באופן רציף, רלוונטי ואפקטיבי גם בתנאים משתנים. בית הספר הוירטואלי אינו רק ספק תוכן, אלא <strong>פלטפורמה לפיתוח יכולות</strong> — המאפשרת לצוותים לתכנן, לייצר ולהפעיל תהליכי למידה חדשניים המותאמים למציאות משתנה.</p>
+            <p style="margin-bottom: 20px;">המתווה נשען על מעבר מתפיסה של "תגובה לחירום" לתפיסה של <strong>מוכנות מתמשכת (Readiness)</strong>, שבה צוותי ההוראה מצוידים בכלים, מתודות ותשתיות המאפשרים להם לעבור במהירות בין למידה פרונטלית, היברידית ומקוונת — מבלי לפגוע באיכות הלמידה.</p>
+            <p>המתווה מחזק את תפקיד מרכז החדשנות כ־<strong>Hub פדגוגי-טכנולוגי</strong>, המאגד ידע, כלים ודוגמאות יישומיות, ומספק מענה מותאם לצוותים — תוך פיתוח מיומנויות עתיד כגון יצירתיות, פתרון בעיות, חשיבה ביקורתית וגמישות מחשבתית.</p>
+        </div>
+    </div>
+</section>
+
+<!-- ===== GOALS SECTION ===== -->
+<section class="section" id="goals">
+    <div class="container">
+        <div class="section-header fade-in">
+            <div class="section-tag"><i class="fas fa-bullseye"></i> מטרות המתווה</div>
+            <h2>המטרות שלנו</h2>
+            <p>שש מטרות מרכזיות המנחות את פעילות בית הספר הוירטואלי של מרחב החדשנות</p>
+        </div>
+        <div class="goals-layout">
+            <div class="goals-images-stack fade-in">
+                <div class="goals-image"><img src="13.jpg" alt="חדשנות בחינוך"></div>
+                <div class="goals-image"><img src="14.jpg" alt="חדשנות בחינוך"></div>
+                <div class="goals-image"><img src="15.jpg" alt="חדשנות בחינוך"></div>
+            </div>
+            <div class="goals-grid" id="goalsGrid">
+                <div class="goal-card fade-in">
+                    <div class="goal-icon"><i class="fas fa-sync-alt"></i></div>
+                    <div class="goal-text">
+                        <h3>הבטחת רציפות פדגוגית</h3>
+                        <p>לאפשר המשכיות למידה איכותית במעבר מהיר בין למידה פרונטלית, היברידית ומקוונת</p>
+                    </div>
+                </div>
+                <div class="goal-card fade-in">
+                    <div class="goal-icon"><i class="fas fa-users-cog"></i></div>
+                    <div class="goal-text">
+                        <h3>חיזוק יכולות צוותי ההוראה</h3>
+                        <p>להקנות למורים כלים ומתודות לפיתוח והפעלה של תכנים חדשניים המותאמים למציאות משתנה</p>
+                    </div>
+                </div>
+                <div class="goal-card fade-in">
+                    <div class="goal-icon"><i class="fas fa-lightbulb"></i></div>
+                    <div class="goal-text">
+                        <h3>פיתוח מיומנויות עתיד</h3>
+                        <p>לקדם אצל תלמידים מיומנויות כגון חשיבה יצירתית, פתרון בעיות, חשיבה ביקורתית וגמישות מחשבתית</p>
+                    </div>
+                </div>
+                <div class="goal-card fade-in">
+                    <div class="goal-icon"><i class="fas fa-box-open"></i></div>
+                    <div class="goal-text">
+                        <h3>יצירת מאגר תכנים וכלים יישומיים</h3>
+                        <p>לבנות בנק פעילויות, תבניות ומשימות מוכנות לשימוש מיידי במצבי חירום</p>
+                    </div>
+                </div>
+                <div class="goal-card fade-in">
+                    <div class="goal-icon"><i class="fas fa-seedling"></i></div>
+                    <div class="goal-text">
+                        <h3>הטמעת תרבות של חדשנות וגמישות ארגונית</h3>
+                        <p>לחזק את היכולת של מוסדות החינוך להסתגל לשינויים, ליזום ולפעול באופן פרואקטיבי גם בתנאי אי־ודאות</p>
+                    </div>
+                </div>
+                <div class="goal-card fade-in">
+                    <div class="goal-icon"><i class="fas fa-shield-alt"></i></div>
+                    <div class="goal-text">
+                        <h3>חיזוק החוסן של צוותי ההוראה</h3>
+                        <p>לחזק את היכולת האישית והמקצועית של צוותי ההוראה להתמודד עם מצבי אי־ודאות ושינויים תכופים, תוך שמירה על תפקוד פדגוגי איכותי ותחושת מסוגלות גבוהה</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ===== WORKSHOPS SECTION ===== -->
+<section class="section" id="workshops">
+    <div class="container">
+        <div class="section-header fade-in">
+            <div class="section-tag"><i class="fas fa-flask"></i> סדנאות</div>
+            <h2>הסדנאות שלנו</h2>
+            <p>מגוון סדנאות מעשיות ומעוררות השראה בתחומי החדשנות החינוכית</p>
+        </div>
+        <div class="workshops-grid" id="workshopsGrid">
+            <div class="workshop-card fade-in">
+                <div class="workshop-image" style="background-image: url('2.png');">
+                    <div class="overlay"><i class="fas fa-rocket"></i></div>
+                    <span class="workshop-badge">חדש!</span>
+                </div>
+                <div class="workshop-body">
+                    <h3>חדשנות ויצירתיות בעולם החינוך - אתגרים והזדמנויות</h3>
+                    <p>סדנה המציגה את האתגרים וההזדמנויות בשילוב חדשנות ויצירתיות במערכת החינוך, עם כלים מעשיים ליישום בשטח</p>
+                    <div class="workshop-meta">
+                        <span><i class="fas fa-user-tie"></i> מנחה: יוסף והיב</span>
+                        <a href="#contact" class="register-btn">הרשמה</a>
+                    </div>
+                </div>
+            </div>
+            <div class="workshop-card fade-in">
+                <div class="workshop-image" style="background-image: url('1.png');">
+                    <div class="overlay"><i class="fas fa-cogs"></i></div>
+                    <span class="workshop-badge">חדש!</span>
+                </div>
+                <div class="workshop-body">
+                    <h3>חשיבה המצאתית שיטתית</h3>
+                    <p>סדנה לפיתוח חשיבה המצאתית שיטתית (TRIZ) — מתודולוגיה לפתרון בעיות בצורה יצירתית ומובנית, עם יישומים מעשיים בכיתה</p>
+                    <div class="workshop-meta">
+                        <span><i class="fas fa-user-tie"></i> מנחה: יוסף והיב</span>
+                        <a href="#contact" class="register-btn">הרשמה</a>
+                    </div>
+                </div>
+            </div>
+            <div class="workshop-card fade-in">
+                <div class="workshop-image" style="background-image: url('4.png');">
+                    <div class="overlay"><i class="fas fa-brain"></i></div>
+                    <span class="workshop-badge">חדש!</span>
+                </div>
+                <div class="workshop-body">
+                    <h3>חדר כושר מנטאלי</h3>
+                    <p>סדנה לחיזוק החוסן המנטאלי והגמישות המחשבתית של צוותי הוראה — תרגולים מעשיים לפיתוח כושר חשיבה ומסוגלות אישית</p>
+                    <div class="workshop-meta">
+                        <span><i class="fas fa-user-tie"></i> מנחה: יוסף והיב</span>
+                        <a href="#contact" class="register-btn">הרשמה</a>
+                    </div>
+                </div>
+            </div>
+            <div class="workshop-card fade-in">
+                <div class="workshop-image" style="background-image: url('5.png');">
+                    <div class="overlay"><i class="fas fa-robot"></i></div>
+                    <span class="workshop-badge">חדש!</span>
+                </div>
+                <div class="workshop-body">
+                    <h3>בניית בוט ליצירת חידות חשיבה</h3>
+                    <p>סדנה מעשית לבניית בוט מבוסס AI שיוצר חידות חשיבה מותאמות אישית — שילוב טכנולוגיה ויצירתיות בהוראה</p>
+                    <div class="workshop-meta">
+                        <span><i class="fas fa-user-tie"></i> מנחה: רונית שור</span>
+                        <a href="#contact" class="register-btn">הרשמה</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ===== LIBRARY SECTION ===== -->
+<section class="section" id="library">
+    <div class="container">
+        <div class="section-header fade-in">
+            <div class="section-tag"><i class="fas fa-book"></i> ספריית תוכן</div>
+            <h2>מערכים ומצגות</h2>
+            <p>אוסף מערכי שיעור, מצגות וחומרי למידה מוכנים לשימוש בכיתה</p>
+        </div>
+        <div class="library-tabs fade-in">
+            <button class="tab-btn active" onclick="filterLibrary('all', this)">הכל</button>
+            <button class="tab-btn" onclick="filterLibrary('plans', this)">מערכי שיעור</button>
+            <button class="tab-btn" onclick="filterLibrary('presentations', this)">מצגות</button>
+            <button class="tab-btn" onclick="filterLibrary('guides', this)">מדריכים</button>
+        </div>
+        <div class="library-grid" id="libraryGrid">
+            <div class="library-item fade-in" data-category="plans">
+                <div class="file-icon"><i class="fas fa-file-alt"></i></div>
+                <h4>מערך שיעור - AI בשירות הכתיבה</h4>
+                <span class="file-type">PDF &bull; מערך שיעור</span>
+            </div>
+            <div class="library-item fade-in" data-category="presentations">
+                <div class="file-icon"><i class="fas fa-file-powerpoint"></i></div>
+                <h4>מצגת - מבוא לחשיבה עיצובית</h4>
+                <span class="file-type">PPTX &bull; מצגת</span>
+            </div>
+            <div class="library-item fade-in" data-category="plans">
+                <div class="file-icon"><i class="fas fa-file-alt"></i></div>
+                <h4>מערך שיעור - למידה שיתופית</h4>
+                <span class="file-type">PDF &bull; מערך שיעור</span>
+            </div>
+            <div class="library-item fade-in" data-category="guides">
+                <div class="file-icon"><i class="fas fa-file-pdf"></i></div>
+                <h4>מדריך - כלי AI למורים</h4>
+                <span class="file-type">PDF &bull; מדריך</span>
+            </div>
+            <div class="library-item fade-in" data-category="presentations">
+                <div class="file-icon"><i class="fas fa-file-powerpoint"></i></div>
+                <h4>מצגת - גיימיפיקציה בכיתה</h4>
+                <span class="file-type">PPTX &bull; מצגת</span>
+            </div>
+            <div class="library-item fade-in" data-category="plans">
+                <div class="file-icon"><i class="fas fa-file-alt"></i></div>
+                <h4>מערך שיעור - פרויקט STEM</h4>
+                <span class="file-type">PDF &bull; מערך שיעור</span>
+            </div>
+            <div class="library-item fade-in" data-category="guides">
+                <div class="file-icon"><i class="fas fa-file-pdf"></i></div>
+                <h4>מדריך - הערכה חלופית</h4>
+                <span class="file-type">PDF &bull; מדריך</span>
+            </div>
+            <div class="library-item fade-in" data-category="presentations">
+                <div class="file-icon"><i class="fas fa-file-powerpoint"></i></div>
+                <h4>מצגת - עתיד החינוך</h4>
+                <span class="file-type">PPTX &bull; מצגת</span>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ===== INNOVATION SECTION ===== -->
+<section class="section" id="innovation">
+    <div class="container">
+        <div class="section-header fade-in">
+            <div class="section-tag"><i class="fas fa-globe"></i> חדשנות חינוכית</div>
+            <h2>חדש בארץ ובעולם</h2>
+            <p>מגמות, מחקרים וחדשנות מעולם החינוך הגלובלי</p>
+        </div>
+        <div class="innovation-grid" id="innovationGrid">
+            <div class="innovation-card fade-in">
+                <div class="innovation-card-img" style="background-image: url('5.png');"></div>
+                <div class="innovation-card-body">
+                    <span class="card-label"><i class="fas fa-fire"></i> טרנד</span>
+                    <h3>AI ג'נרטיבי בכיתה - המהפכה שכבר כאן</h3>
+                    <p>כיצד בתי ספר ברחבי העולם משלבים כלי AI ג'נרטיבי בהוראה ומה ניתן ללמוד מהניסיון שלהם</p>
+                    <a href="#" class="read-more">קראו עוד <i class="fas fa-arrow-left"></i></a>
+                </div>
+            </div>
+            <div class="innovation-card fade-in">
+                <div class="innovation-card-img" style="background-image: url('2.png');"></div>
+                <div class="innovation-card-body">
+                    <span class="card-label"><i class="fas fa-microscope"></i> מחקר</span>
+                    <h3>למידה סוציו-אמוציונלית בעידן הדיגיטלי</h3>
+                    <p>מחקרים חדשים מראים כיצד טכנולוגיה יכולה לתמוך בפיתוח מיומנויות רגשיות-חברתיות</p>
+                    <a href="#" class="read-more">קראו עוד <i class="fas fa-arrow-left"></i></a>
+                </div>
+            </div>
+            <div class="innovation-card fade-in">
+                <div class="innovation-card-img" style="background-image: url('4.png');"></div>
+                <div class="innovation-card-body">
+                    <span class="card-label"><i class="fas fa-star"></i> השראה</span>
+                    <h3>מודל פינלנדי חדש - למידה ללא כיתות</h3>
+                    <p>בית ספר חדש בהלסינקי ביטל לחלוטין את מבנה הכיתות המסורתי ועובד במרחבי למידה גמישים</p>
+                    <a href="#" class="read-more">קראו עוד <i class="fas fa-arrow-left"></i></a>
+                </div>
+            </div>
+            <div class="innovation-card fade-in">
+                <div class="innovation-card-img" style="background-image: url('1.png');"></div>
+                <div class="innovation-card-body">
+                    <span class="card-label"><i class="fas fa-flag"></i> ישראל</span>
+                    <h3>פרויקטים חדשניים במחוז הצפון</h3>
+                    <p>סקירה של הפרויקטים המובילים במרחבי החדשנות של מחוז צפון ותוצאותיהם</p>
+                    <a href="#" class="read-more">קראו עוד <i class="fas fa-arrow-left"></i></a>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ===== VOICES SECTION ===== -->
+<section class="section" id="voices">
+    <div class="container">
+        <div class="section-header fade-in">
+            <div class="section-tag"><i class="fas fa-quote-right"></i> קולות מהשטח</div>
+            <h2>מה אומרים עלינו</h2>
+            <p>חוויות ותובנות של מורים, מנהלים ואנשי חינוך מהשטח</p>
+        </div>
+        <div class="voices-grid" id="voicesGrid">
+            <!-- יתמלא מ-Supabase או דרך פאנל הניהול -->
+        </div>
+        <p class="fade-in" style="text-align:center; color:var(--gray-500); margin-top:30px; font-size:1rem;">תוכן זה יתעדכן בקרוב...</p>
+    </div>
+</section>
+
+<!-- ===== CONTACT SECTION ===== -->
+<section class="section" id="contact">
+    <div class="container">
+        <div class="section-header fade-in">
+            <div class="section-tag"><i class="fas fa-envelope"></i> יצירת קשר</div>
+            <h2>הצטרפו אלינו</h2>
+            <p>הירשמו לסדנאות, שאלו שאלות, או פשוט אמרו שלום</p>
+        </div>
+        <div class="contact-wrapper fade-in">
+            <div class="contact-info">
+                <h3>בואו נחדש ביחד!</h3>
+                <p>מרחב החדשנות והיצירתיות בחינוך מזמין אתכם להצטרף למהפכה החינוכית. מלאו את הטופס ונחזור אליכם בהקדם.</p>
+                <div class="contact-details">
+                    <div class="contact-detail">
+                        <div class="detail-icon"><i class="fas fa-envelope"></i></div>
+                        <span>hadshnot@gmail.com</span>
+                    </div>
+                    <div class="contact-detail">
+                        <div class="detail-icon"><i class="fas fa-phone-alt"></i></div>
+                        <span>04-XXX-XXXX</span>
+                    </div>
+                    <div class="contact-detail">
+                        <div class="detail-icon"><i class="fas fa-map-marker-alt"></i></div>
+                        <span>מרחב החדשנות, מחוז צפון</span>
+                    </div>
+                    <div class="contact-detail">
+                        <div class="detail-icon"><i class="fas fa-clock"></i></div>
+                        <span>ימים א'-ה' | 8:00 - 16:00</span>
+                    </div>
+                </div>
+            </div>
+            <div class="contact-form-card">
+                <h4>טופס הרשמה לסדנאות</h4>
+                <p>מלאו את הפרטים ונחזור אליכם עם אישור הרשמה</p>
+                <form id="registrationForm" onsubmit="handleSubmit(event)">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>שם מלא *</label>
+                            <input type="text" name="full_name" placeholder="הכניסו את שמכם" required>
+                        </div>
+                        <div class="form-group">
+                            <label>אימייל *</label>
+                            <input type="email" name="email" placeholder="your@email.com" required>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>טלפון *</label>
+                            <input type="tel" name="phone" placeholder="050-XXX-XXXX" required>
+                        </div>
+                        <div class="form-group">
+                            <label>בית ספר / מוסד</label>
+                            <input type="text" name="institution" placeholder="שם בית הספר">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>תפקיד</label>
+                        <input type="text" name="role" placeholder="מורה / רכז/ת / מנהל/ת...">
+                    </div>
+                    <div class="form-group">
+                        <label>בחרו סדנה *</label>
+                        <select required name="interest" id="workshopSelect">
+                            <option value="">בחרו סדנה מהרשימה</option>
+                            <option value="חדשנות ויצירתיות בעולם החינוך">חדשנות ויצירתיות בעולם החינוך - אתגרים והזדמנויות</option>
+                            <option value="חשיבה המצאתית שיטתית">חשיבה המצאתית שיטתית</option>
+                            <option value="חדר כושר מנטאלי">חדר כושר מנטאלי</option>
+                            <option value="בניית בוט ליצירת חידות חשיבה">בניית בוט ליצירת חידות חשיבה</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>ימים מועדפים</label>
+                        <div class="checkbox-group" id="preferredDays">
+                            <label class="checkbox-label"><input type="checkbox" name="days" value="א'"> א'</label>
+                            <label class="checkbox-label"><input type="checkbox" name="days" value="ב'"> ב'</label>
+                            <label class="checkbox-label"><input type="checkbox" name="days" value="ג'"> ג'</label>
+                            <label class="checkbox-label"><input type="checkbox" name="days" value="ד'"> ד'</label>
+                            <label class="checkbox-label"><input type="checkbox" name="days" value="ה'"> ה'</label>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>שעות מועדפות</label>
+                        <div class="checkbox-group" id="preferredHours">
+                            <label class="checkbox-label"><input type="radio" name="hours" value="שעות הבוקר"> שעות הבוקר</label>
+                            <label class="checkbox-label"><input type="radio" name="hours" value="שעות אחה״צ"> שעות אחה״צ</label>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>הערות נוספות</label>
+                        <textarea name="message" placeholder="ספרו לנו על הציפיות שלכם מהסדנה..."></textarea>
+                    </div>
+                    <button type="submit" class="submit-btn"><i class="fas fa-paper-plane"></i> שלחו הרשמה</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ===== FOOTER ===== -->
+<footer class="footer">
+    <div class="footer-content">
+        <div class="footer-brand">
+            <img src="logo.png" alt="מרחב החדשנות מחוז צפון" style="height:50px; filter: brightness(2);" onerror="this.style.display='none'">
+            <p>מרחב החדשנות והיצירתיות בחינוך - פלטפורמה לחדשנות חינוכית, פיתוח מקצועי ושיתוף ידע בין אנשי חינוך.</p>
+        </div>
+        <div class="footer-links">
+            <h4>ניווט מהיר</h4>
+            <ul><li><a href="#rationale">רציונל</a></li><li><a href="#goals">מטרות</a></li><li><a href="#workshops">סדנאות</a></li><li><a href="#library">ספריית תוכן</a></li><li><a href="#innovation">חדשנות חינוכית</a></li></ul>
+        </div>
+        <div class="footer-links">
+            <h4>קישורים</h4>
+            <ul><li><a href="#voices">קולות מהשטח</a></li><li><a href="#contact">יצירת קשר</a></li><li><a href="#">מדיניות פרטיות</a></li><li><a href="#">תנאי שימוש</a></li></ul>
+        </div>
+        <div class="footer-links">
+            <h4>עקבו אחרינו</h4>
+            <ul><li><a href="#"><i class="fab fa-facebook-f"></i> פייסבוק</a></li><li><a href="#"><i class="fab fa-youtube"></i> יוטיוב</a></li><li><a href="#"><i class="fab fa-instagram"></i> אינסטגרם</a></li><li><a href="#"><i class="fab fa-whatsapp"></i> ווטסאפ</a></li></ul>
+        </div>
+    </div>
+    <div class="footer-bottom">
+        <p>&copy; 2026 מרחב החדשנות והיצירתיות בחינוך | מחוז צפון. כל הזכויות שמורות.</p>
+        <div class="social-links">
+            <a href="#"><i class="fab fa-facebook-f"></i></a>
+            <a href="#"><i class="fab fa-youtube"></i></a>
+            <a href="#"><i class="fab fa-instagram"></i></a>
+            <a href="#"><i class="fab fa-whatsapp"></i></a>
+        </div>
+    </div>
+</footer>
+
+<!-- ===== ADMIN TOGGLE BUTTON (floating) ===== -->
+<button class="admin-toggle" onclick="openAdmin()" title="פאנל ניהול">
+    <i class="fas fa-cog"></i>
+</button>
+
+<!-- ===== SCROLL TO TOP ===== -->
+<button class="scroll-top" id="scrollTop" onclick="window.scrollTo({top:0, behavior:'smooth'})">
+    <i class="fas fa-chevron-up"></i>
+</button>
+
+<!-- ===== ADMIN PANEL OVERLAY ===== -->
+<div class="admin-overlay" id="adminOverlay" onclick="closeAdmin()">
+    <div class="admin-panel" onclick="event.stopPropagation()">
+        <div class="admin-header">
+            <h2><i class="fas fa-shield-alt"></i> פאנל ניהול תוכן</h2>
+            <button class="admin-close" onclick="closeAdmin()"><i class="fas fa-times"></i></button>
+        </div>
+        <div class="admin-tabs">
+            <button class="admin-tab active" onclick="switchAdminTab('workshops-admin', this)"><i class="fas fa-flask"></i> סדנאות</button>
+            <button class="admin-tab" onclick="switchAdminTab('library-admin', this)"><i class="fas fa-book"></i> ספרייה</button>
+            <button class="admin-tab" onclick="switchAdminTab('innovation-admin', this)"><i class="fas fa-globe"></i> חדשנות</button>
+            <button class="admin-tab" onclick="switchAdminTab('voices-admin', this)"><i class="fas fa-comments"></i> קולות</button>
+            <button class="admin-tab" onclick="switchAdminTab('goals-admin', this)"><i class="fas fa-bullseye"></i> מטרות</button>
+            <button class="admin-tab" onclick="switchAdminTab('registrations-admin', this)"><i class="fas fa-user-plus"></i> נרשמים</button>
+        </div>
+        <div class="admin-body">
+
+            <!-- LOGIN SECTION -->
+            <div id="admin-login-section" style="text-align:center; padding: 40px 20px;">
+                <i class="fas fa-lock" style="font-size: 3rem; color: var(--blue); margin-bottom: 20px;"></i>
+                <h3 style="margin-bottom: 8px; color: var(--gray-900);">התחברות לפאנל ניהול</h3>
+                <p style="color: var(--gray-500); margin-bottom: 24px;">רק מנהלים מורשים יכולים לערוך תוכן באתר</p>
+                <div style="max-width: 400px; margin: 0 auto;">
+                    <div class="admin-form-group">
+                        <input type="email" id="adminEmail" placeholder="אימייל" style="text-align:center;">
+                    </div>
+                    <div class="admin-form-group">
+                        <input type="password" id="adminPassword" placeholder="סיסמה" style="text-align:center;" onkeydown="if(event.key==='Enter') adminLogin()">
+                    </div>
+                    <p id="loginError" style="color:#DC2626; font-size:0.9rem; margin-bottom:12px;"></p>
+                    <button class="admin-btn admin-btn-primary admin-btn-large" onclick="adminLogin()">
+                        <i class="fas fa-sign-in-alt"></i> התחברות
+                    </button>
+                </div>
+            </div>
+
+            <div id="admin-content-sections" style="display:none;">
+
+            <!-- LOGOUT BUTTON -->
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px; padding-bottom:16px; border-bottom:1px solid var(--gray-200);">
+                <span style="font-size:0.9rem; color:var(--gray-500);"><i class="fas fa-user-check" style="color:var(--blue);"></i> מחובר/ת כמנהל/ת</span>
+                <button class="admin-btn admin-btn-danger" onclick="adminLogout()"><i class="fas fa-sign-out-alt"></i> התנתקות</button>
+            </div>
+
+            <!-- WORKSHOPS ADMIN -->
+            <div class="admin-section active" id="workshops-admin">
+                <h3 style="margin-bottom:16px; color: var(--gray-900);">ניהול סדנאות</h3>
+                <div id="workshopsList"></div>
+                <button class="admin-btn admin-btn-primary admin-btn-large" onclick="toggleAddForm('workshop-add-form')">
+                    <i class="fas fa-plus"></i> הוסיפי סדנה חדשה
+                </button>
+                <div class="admin-add-form" id="workshop-add-form">
+                    <h4 style="margin-bottom:16px;">סדנה חדשה</h4>
+                    <div class="admin-form-group">
+                        <label>שם הסדנה</label>
+                        <input type="text" id="newWorkshopName" placeholder="לדוגמה: קידוד יצירתי בכיתה">
+                    </div>
+                    <div class="admin-form-group">
+                        <label>תיאור</label>
+                        <textarea id="newWorkshopDesc" placeholder="תארי את הסדנה בקצרה..."></textarea>
+                    </div>
+                    <div class="admin-form-row">
+                        <div class="admin-form-group">
+                            <label>משך (שעות)</label>
+                            <input type="text" id="newWorkshopDuration" placeholder="3">
+                        </div>
+                        <div class="admin-form-group">
+                            <label>תגית (אופציונלי)</label>
+                            <select id="newWorkshopBadge">
+                                <option value="">ללא</option>
+                                <option value="חדש!">חדש!</option>
+                                <option value="פופולרי">פופולרי</option>
+                                <option value="מתקדם">מתקדם</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="admin-form-group">
+                        <label>כתובת תמונה (URL)</label>
+                        <input type="text" id="newWorkshopImg" placeholder="https://images.unsplash.com/...">
+                    </div>
+                    <button class="admin-btn admin-btn-success admin-btn-large" onclick="addWorkshop()">
+                        <i class="fas fa-check"></i> שמור סדנה
+                    </button>
+                    <div class="admin-saved-msg" id="workshop-saved">הסדנה נוספה בהצלחה!</div>
+                </div>
+            </div>
+
+            <!-- LIBRARY ADMIN -->
+            <div class="admin-section" id="library-admin">
+                <h3 style="margin-bottom:16px; color: var(--gray-900);">ניהול ספריית תוכן</h3>
+                <div id="libraryList"></div>
+                <button class="admin-btn admin-btn-primary admin-btn-large" onclick="toggleAddForm('library-add-form')">
+                    <i class="fas fa-plus"></i> הוסיפי פריט חדש
+                </button>
+                <div class="admin-add-form" id="library-add-form">
+                    <h4 style="margin-bottom:16px;">פריט חדש</h4>
+                    <div class="admin-form-group">
+                        <label>שם הפריט</label>
+                        <input type="text" id="newLibName" placeholder="לדוגמה: מערך שיעור - חשיבה ביקורתית">
+                    </div>
+                    <div class="admin-form-row">
+                        <div class="admin-form-group">
+                            <label>קטגוריה</label>
+                            <select id="newLibCategory">
+                                <option value="plans">מערך שיעור</option>
+                                <option value="presentations">מצגת</option>
+                                <option value="guides">מדריך</option>
+                            </select>
+                        </div>
+                        <div class="admin-form-group">
+                            <label>סוג קובץ</label>
+                            <select id="newLibType">
+                                <option value="PDF">PDF</option>
+                                <option value="PPTX">PPTX</option>
+                                <option value="DOCX">DOCX</option>
+                                <option value="MP4">MP4</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="admin-form-group">
+                        <label>קישור לקובץ (URL)</label>
+                        <input type="text" id="newLibUrl" placeholder="https://drive.google.com/...">
+                    </div>
+                    <button class="admin-btn admin-btn-success admin-btn-large" onclick="addLibraryItem()">
+                        <i class="fas fa-check"></i> שמור פריט
+                    </button>
+                    <div class="admin-saved-msg" id="library-saved">הפריט נוסף בהצלחה!</div>
+                </div>
+            </div>
+
+            <!-- INNOVATION ADMIN -->
+            <div class="admin-section" id="innovation-admin">
+                <h3 style="margin-bottom:16px; color: var(--gray-900);">ניהול תכני חדשנות</h3>
+                <div id="innovationList"></div>
+                <button class="admin-btn admin-btn-primary admin-btn-large" onclick="toggleAddForm('innovation-add-form')">
+                    <i class="fas fa-plus"></i> הוסיפי כתבה חדשה
+                </button>
+                <div class="admin-add-form" id="innovation-add-form">
+                    <h4 style="margin-bottom:16px;">כתבה חדשה</h4>
+                    <div class="admin-form-group">
+                        <label>כותרת</label>
+                        <input type="text" id="newInnoTitle" placeholder="כותרת הכתבה">
+                    </div>
+                    <div class="admin-form-group">
+                        <label>תיאור</label>
+                        <textarea id="newInnoDesc" placeholder="תקציר הכתבה..."></textarea>
+                    </div>
+                    <div class="admin-form-row">
+                        <div class="admin-form-group">
+                            <label>תגית</label>
+                            <select id="newInnoLabel">
+                                <option value="טרנד">טרנד</option>
+                                <option value="מחקר">מחקר</option>
+                                <option value="השראה">השראה</option>
+                                <option value="ישראל">ישראל</option>
+                            </select>
+                        </div>
+                        <div class="admin-form-group">
+                            <label>קישור</label>
+                            <input type="text" id="newInnoLink" placeholder="https://...">
+                        </div>
+                    </div>
+                    <div class="admin-form-group">
+                        <label>כתובת תמונה (URL)</label>
+                        <input type="text" id="newInnoImg" placeholder="https://images.unsplash.com/...">
+                    </div>
+                    <button class="admin-btn admin-btn-success admin-btn-large" onclick="addInnovation()">
+                        <i class="fas fa-check"></i> שמור כתבה
+                    </button>
+                    <div class="admin-saved-msg" id="innovation-saved">הכתבה נוספה בהצלחה!</div>
+                </div>
+            </div>
+
+            <!-- VOICES ADMIN -->
+            <div class="admin-section" id="voices-admin">
+                <h3 style="margin-bottom:16px; color: var(--gray-900);">ניהול עדויות</h3>
+                <div id="voicesList"></div>
+                <button class="admin-btn admin-btn-primary admin-btn-large" onclick="toggleAddForm('voices-add-form')">
+                    <i class="fas fa-plus"></i> הוסיפי עדות חדשה
+                </button>
+                <div class="admin-add-form" id="voices-add-form">
+                    <h4 style="margin-bottom:16px;">עדות חדשה</h4>
+                    <div class="admin-form-group">
+                        <label>ציטוט</label>
+                        <textarea id="newVoiceQuote" placeholder='לדוגמה: "הסדנה שינתה את דרך ההוראה שלי..."'></textarea>
+                    </div>
+                    <div class="admin-form-row">
+                        <div class="admin-form-group">
+                            <label>שם</label>
+                            <input type="text" id="newVoiceName" placeholder="שם מלא">
+                        </div>
+                        <div class="admin-form-group">
+                            <label>תפקיד</label>
+                            <input type="text" id="newVoiceRole" placeholder="מורה ל... / מנהל/ת...">
+                        </div>
+                    </div>
+                    <button class="admin-btn admin-btn-success admin-btn-large" onclick="addVoice()">
+                        <i class="fas fa-check"></i> שמור עדות
+                    </button>
+                    <div class="admin-saved-msg" id="voices-saved">העדות נוספה בהצלחה!</div>
+                </div>
+            </div>
+
+            <!-- GOALS ADMIN -->
+            <div class="admin-section" id="goals-admin">
+                <h3 style="margin-bottom:16px; color: var(--gray-900);">ניהול מטרות</h3>
+                <div id="goalsList"></div>
+                <button class="admin-btn admin-btn-primary admin-btn-large" onclick="toggleAddForm('goals-add-form')">
+                    <i class="fas fa-plus"></i> הוסיפי מטרה חדשה
+                </button>
+                <div class="admin-add-form" id="goals-add-form">
+                    <h4 style="margin-bottom:16px;">מטרה חדשה</h4>
+                    <div class="admin-form-group">
+                        <label>כותרת</label>
+                        <input type="text" id="newGoalTitle" placeholder="שם המטרה">
+                    </div>
+                    <div class="admin-form-group">
+                        <label>תיאור</label>
+                        <textarea id="newGoalDesc" placeholder="תארי את המטרה..."></textarea>
+                    </div>
+                    <div class="admin-form-group">
+                        <label>אייקון (Font Awesome class)</label>
+                        <select id="newGoalIcon">
+                            <option value="fas fa-lightbulb">נורה - lightbulb</option>
+                            <option value="fas fa-robot">רובוט - robot</option>
+                            <option value="fas fa-brain">מוח - brain</option>
+                            <option value="fas fa-rocket">רקטה - rocket</option>
+                            <option value="fas fa-star">כוכב - star</option>
+                            <option value="fas fa-puzzle-piece">פאזל - puzzle</option>
+                            <option value="fas fa-graduation-cap">כובע סיום - graduation</option>
+                            <option value="fas fa-hands-helping">עזרה הדדית - hands</option>
+                        </select>
+                    </div>
+                    <button class="admin-btn admin-btn-success admin-btn-large" onclick="addGoal()">
+                        <i class="fas fa-check"></i> שמור מטרה
+                    </button>
+                    <div class="admin-saved-msg" id="goals-saved">המטרה נוספה בהצלחה!</div>
+                </div>
+            </div>
+
+            <div class="admin-section" id="registrations-admin">
+                <h3 style="margin-bottom:16px; color: var(--gray-900);">נרשמים לסדנאות</h3>
+                <div style="margin-bottom:16px; display:flex; gap:10px; align-items:center; flex-wrap:wrap;">
+                    <button class="admin-btn admin-btn-primary" onclick="loadRegistrations()"><i class="fas fa-sync"></i> רענון</button>
+                    <button class="admin-btn" onclick="exportRegistrations()" style="background:var(--blue);color:white;"><i class="fas fa-download"></i> ייצוא CSV</button>
+                    <span id="regCount" style="color:var(--gray-500); font-size:0.9rem;"></span>
+                </div>
+                <div id="registrationsList" style="overflow-x:auto;"></div>
+            </div>
+
+            </div><!-- /admin-content-sections -->
+        </div>
+    </div>
+</div>
+
+<!-- ===== SUPABASE SDK ===== -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+
+<!-- ===== JAVASCRIPT ===== -->
+<script>
+    // ===== SUPABASE CONFIG =====
+    const SUPABASE_URL = 'https://nvgyqatgfkvmyumazegi.supabase.co';
+    const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im52Z3lxYXRnZmt2bXl1bWF6ZWdpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzczNDUzMzYsImV4cCI6MjA5MjkyMTMzNn0.XUoLpI1qnfJRi8jRonrn6R_fBIV-wWGdLZDscOHocj8';
+    const sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+    let isAdmin = false;
+    let currentUser = null;
+
+    // ===== NAVIGATION & UI =====
+    window.addEventListener('scroll', () => {
+        const navbar = document.getElementById('navbar');
+        const scrollTop = document.getElementById('scrollTop');
+        navbar.classList.toggle('scrolled', window.scrollY > 50);
+        scrollTop.classList.toggle('visible', window.scrollY > 400);
+    });
+
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener('click', function(e) {
+            e.preventDefault();
+            const target = document.querySelector(this.getAttribute('href'));
+            if (target) target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        });
+    });
+
+    const sections = document.querySelectorAll('section, .hero, .dashboard');
+    const navLinks = document.querySelectorAll('.nav-links a');
+    window.addEventListener('scroll', () => {
+        let current = '';
+        sections.forEach(s => { if (window.scrollY >= s.offsetTop - 100) current = s.getAttribute('id'); });
+        navLinks.forEach(l => { l.classList.toggle('active', l.getAttribute('href') === '#' + current); });
+    });
+
+    // Fade-in
+    function initFadeIn() {
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach((entry, i) => {
+                if (entry.isIntersecting) {
+                    setTimeout(() => entry.target.classList.add('visible'), i * 80);
+                    observer.unobserve(entry.target);
+                }
+            });
+        }, { threshold: 0.1 });
+        document.querySelectorAll('.fade-in:not(.visible)').forEach(el => observer.observe(el));
+    }
+
+    // Particles
+    (function() {
+        const c = document.getElementById('particles');
+        const colors = ['rgba(0,174,239,0.3)','rgba(245,166,35,0.3)','rgba(255,255,255,0.2)'];
+        for (let i = 0; i < 30; i++) {
+            const p = document.createElement('div'); p.className = 'particle';
+            const s = Math.random() * 6 + 2;
+            Object.assign(p.style, {
+                width: s+'px', height: s+'px',
+                background: colors[Math.floor(Math.random()*colors.length)],
+                left: Math.random()*100+'%',
+                animationDuration: (Math.random()*15+10)+'s',
+                animationDelay: (Math.random()*10)+'s'
+            });
+            c.appendChild(p);
+        }
+    })();
+
+    // Library filter
+    function filterLibrary(cat, btn) {
+        document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        document.querySelectorAll('.library-item').forEach(item => {
+            item.style.display = (cat === 'all' || item.dataset.category === cat) ? '' : 'none';
+        });
+    }
+
+    // Mobile nav
+    function toggleMobileNav() { document.getElementById('mobileNav').classList.toggle('open'); }
+    function closeMobileNav() { document.getElementById('mobileNav').classList.remove('open'); }
+
+    // Form
+    async function handleSubmit(e) {
+        e.preventDefault();
+        const btn = e.target.querySelector('.submit-btn');
+        const form = e.target;
+        btn.disabled = true;
+        btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> שולח...';
+        try {
+            const { error } = await sb.from('registrations').insert({
+                full_name: form.full_name.value,
+                email: form.email.value,
+                phone: form.phone.value,
+                institution: form.institution.value || null,
+                role: form.role.value || null,
+                interest: form.interest.value,
+                message: form.message.value || null,
+                preferred_days: Array.from(form.querySelectorAll('input[name="days"]:checked')).map(cb => cb.value).join(', ') || null,
+                preferred_hours: form.querySelector('input[name="hours"]:checked')?.value || null
+            });
+            if (error) throw error;
+            btn.innerHTML = '<i class="fas fa-check"></i> נרשמתם בהצלחה!';
+            btn.style.background = 'linear-gradient(135deg, #10B981, #059669)';
+            setTimeout(() => { btn.innerHTML = '<i class="fas fa-paper-plane"></i> שלחו הרשמה'; btn.style.background = ''; btn.disabled = false; form.reset(); }, 3000);
+        } catch (err) {
+            btn.innerHTML = '<i class="fas fa-exclamation-triangle"></i> שגיאה, נסו שוב';
+            btn.style.background = 'linear-gradient(135deg, #EF4444, #DC2626)';
+            setTimeout(() => { btn.innerHTML = '<i class="fas fa-paper-plane"></i> שלחו הרשמה'; btn.style.background = ''; btn.disabled = false; }, 3000);
+        }
+    }
+
+    // ===== LOAD CONTENT FROM SUPABASE =====
+    async function loadAllContent() {
+        await Promise.all([loadWorkshops(), loadGoals(), loadLibrary(), loadInnovations(), loadVoices()]);
+        initFadeIn();
+    }
+
+    async function loadWorkshops() {
+        const { data } = await sb.from('workshops').select('*').order('sort_order');
+        if (!data) return;
+        const grid = document.getElementById('workshopsGrid');
+        const select = document.getElementById('workshopSelect');
+        grid.innerHTML = '';
+        // Keep first option in select
+        select.innerHTML = '<option value="">בחרו סדנה מהרשימה</option>';
+        data.forEach(w => {
+            grid.innerHTML += `
+            <div class="workshop-card fade-in" data-id="${w.id}">
+                <div class="workshop-image" style="background-image: url('${w.image}');">
+                    <div class="overlay"><i class="${w.icon}"></i></div>
+                    ${w.badge ? `<span class="workshop-badge">${w.badge}</span>` : ''}
+                </div>
+                <div class="workshop-body">
+                    <h3>${w.title}</h3>
+                    <p>${w.description || ''}</p>
+                    <div class="workshop-meta">
+                        <span>${w.instructor ? `<i class="fas fa-user-tie"></i> מנחה: ${w.instructor}` : (w.duration ? `<i class="far fa-clock"></i> ${w.duration} שעות` : '')}</span>
+                        <a href="#contact" class="register-btn">הרשמה</a>
+                    </div>
+                </div>
+            </div>`;
+            select.innerHTML += `<option value="${w.id}">${w.title}</option>`;
+        });
+    }
+
+    async function loadGoals() {
+        const { data } = await sb.from('goals').select('*').order('sort_order');
+        if (!data) return;
+        const grid = document.getElementById('goalsGrid');
+        grid.innerHTML = '';
+        const bgColors = ['rgba(0,174,239,0.1)','rgba(245,166,35,0.1)','rgba(16,185,129,0.1)','rgba(139,92,246,0.1)','rgba(236,72,153,0.1)','rgba(59,130,246,0.1)'];
+        const txtColors = ['#00AEEF','#F5A623','#10B981','#8B5CF6','#EC4899','#3B82F6'];
+        data.forEach((g, i) => {
+            grid.innerHTML += `
+            <div class="goal-card fade-in" data-id="${g.id}">
+                <div class="goal-icon" style="background:${bgColors[i%6]};color:${txtColors[i%6]}"><i class="${g.icon}"></i></div>
+                <div class="goal-text"><h3>${g.title}</h3><p>${g.description || ''}</p></div>
+            </div>`;
+        });
+    }
+
+    async function loadLibrary() {
+        const { data } = await sb.from('library_items').select('*').order('sort_order');
+        if (!data) return;
+        const grid = document.getElementById('libraryGrid');
+        grid.innerHTML = '';
+        const icons = { plans: 'fa-file-alt', presentations: 'fa-file-powerpoint', guides: 'fa-file-pdf' };
+        const catNames = { plans: 'מערך שיעור', presentations: 'מצגת', guides: 'מדריך' };
+        data.forEach(item => {
+            grid.innerHTML += `
+            <div class="library-item fade-in" data-category="${item.category}" data-id="${item.id}">
+                <div class="file-icon"><i class="fas ${icons[item.category] || 'fa-file'}"></i></div>
+                <h4>${item.title}</h4>
+                <span class="file-type">${item.file_type} &bull; ${catNames[item.category] || item.category}</span>
+            </div>`;
+        });
+    }
+
+    async function loadInnovations() {
+        const { data } = await sb.from('innovations').select('*').order('sort_order');
+        if (!data) return;
+        const grid = document.getElementById('innovationGrid');
+        grid.innerHTML = '';
+        const labelIcons = { 'טרנד': 'fa-fire', 'מחקר': 'fa-microscope', 'השראה': 'fa-star', 'ישראל': 'fa-flag' };
+        data.forEach(n => {
+            grid.innerHTML += `
+            <div class="innovation-card fade-in" data-id="${n.id}">
+                <div class="innovation-card-img" style="background-image: url('${n.image}');"></div>
+                <div class="innovation-card-body">
+                    <span class="card-label"><i class="fas ${labelIcons[n.label] || 'fa-bolt'}"></i> ${n.label}</span>
+                    <h3>${n.title}</h3>
+                    <p>${n.description || ''}</p>
+                    <a href="${n.link || '#'}" class="read-more">קראו עוד <i class="fas fa-arrow-left"></i></a>
+                </div>
+            </div>`;
+        });
+    }
+
+    async function loadVoices() {
+        const { data } = await sb.from('voices').select('*').order('sort_order');
+        if (!data) return;
+        const grid = document.getElementById('voicesGrid');
+        grid.innerHTML = '';
+        const gradients = [
+            'linear-gradient(135deg, var(--blue), var(--blue-dark))',
+            'linear-gradient(135deg, var(--orange), var(--orange-dark))',
+            'linear-gradient(135deg, #7C3AED, #5B21B6)',
+            'linear-gradient(135deg, #10B981, #059669)'
+        ];
+        data.forEach((v, i) => {
+            const initials = v.author_name.split(' ').map(w => w[0]).join('.').substring(0, 3);
+            grid.innerHTML += `
+            <div class="voice-card fade-in" data-id="${v.id}">
+                <div class="quote-icon"><i class="fas fa-quote-right"></i></div>
+                <blockquote>"${v.quote}"</blockquote>
+                <div class="voice-author">
+                    <div class="voice-avatar" style="background: ${gradients[i % gradients.length]}">${initials}</div>
+                    <div class="voice-author-info"><strong>${v.author_name}</strong><span>${v.author_role || ''}</span></div>
+                </div>
+            </div>`;
+        });
+    }
+
+    // ===== AUTH & ADMIN =====
+    async function checkAuth() {
+        const { data: { session } } = await sb.auth.getSession();
+        if (session) {
+            currentUser = session.user;
+            const { data: adminData } = await sb.from('admin_users').select('*').eq('user_id', session.user.id).single();
+            isAdmin = !!adminData;
+        } else {
+            isAdmin = false;
+            currentUser = null;
+        }
+        document.querySelector('.admin-toggle').style.display = isAdmin ? 'flex' : 'none';
+        updateAdminUI();
+    }
+
+    function updateAdminUI() {
+        const loginSection = document.getElementById('admin-login-section');
+        const contentSections = document.getElementById('admin-content-sections');
+        const tabsEl = document.querySelector('.admin-tabs');
+        if (isAdmin) {
+            if (loginSection) loginSection.style.display = 'none';
+            if (contentSections) contentSections.style.display = 'block';
+            if (tabsEl) tabsEl.style.display = 'flex';
+        } else {
+            if (loginSection) loginSection.style.display = 'block';
+            if (contentSections) contentSections.style.display = 'none';
+            if (tabsEl) tabsEl.style.display = 'none';
+        }
+    }
+
+    async function adminLogin() {
+        const email = document.getElementById('adminEmail').value;
+        const password = document.getElementById('adminPassword').value;
+        const errEl = document.getElementById('loginError');
+        errEl.textContent = '';
+        if (!email || !password) { errEl.textContent = 'נא למלא אימייל וסיסמה'; return; }
+
+        const { data, error } = await sb.auth.signInWithPassword({ email, password });
+        if (error) { errEl.textContent = 'שגיאה בהתחברות: ' + error.message + ' (קוד: ' + (error.status || error.code || '') + ')'; return; }
+
+        // Check if user is admin
+        const { data: adminData } = await sb.from('admin_users').select('*').eq('user_id', data.user.id).single();
+        if (!adminData) {
+            await sb.auth.signOut();
+            errEl.textContent = 'אין לך הרשאות ניהול. פנה/י למנהלת.';
+            return;
+        }
+        currentUser = data.user;
+        isAdmin = true;
+        document.querySelector('.admin-toggle').style.display = 'flex';
+        updateAdminUI();
+        refreshAdminLists();
+    }
+
+    async function adminLogout() {
+        await sb.auth.signOut();
+        isAdmin = false;
+        currentUser = null;
+        document.querySelector('.admin-toggle').style.display = 'none';
+        closeAdmin();
+    }
+
+    function openAdmin() {
+        document.getElementById('adminOverlay').classList.add('open');
+        updateAdminUI();
+        if (isAdmin) refreshAdminLists();
+    }
+    function closeAdmin() { document.getElementById('adminOverlay').classList.remove('open'); }
+
+    function switchAdminTab(sectionId, btn) {
+        document.querySelectorAll('.admin-tab').forEach(t => t.classList.remove('active'));
+        document.querySelectorAll('.admin-section').forEach(s => s.classList.remove('active'));
+        btn.classList.add('active');
+        document.getElementById(sectionId).classList.add('active');
+        if (sectionId === 'registrations-admin') loadRegistrations();
+    }
+
+    function toggleAddForm(id) { document.getElementById(id).classList.toggle('open'); }
+
+    function showSavedMsg(id) {
+        const msg = document.getElementById(id);
+        msg.style.display = 'block';
+        setTimeout(() => { msg.style.display = 'none'; }, 2500);
+    }
+
+    // ===== ADMIN REFRESH LISTS =====
+    async function refreshAdminLists() {
+        const tables = [
+            { table: 'workshops', listEl: 'workshopsList', titleKey: 'title', descKey: 'description' },
+            { table: 'library_items', listEl: 'libraryList', titleKey: 'title', descKey: 'file_type' },
+            { table: 'innovations', listEl: 'innovationList', titleKey: 'title', descKey: 'label' },
+            { table: 'voices', listEl: 'voicesList', titleKey: 'author_name', descKey: 'quote' },
+            { table: 'goals', listEl: 'goalsList', titleKey: 'title', descKey: 'description' }
+        ];
+        for (const t of tables) {
+            const { data } = await sb.from(t.table).select('*').order('sort_order');
+            const el = document.getElementById(t.listEl);
+            if (!el || !data) continue;
+            el.innerHTML = '';
+            data.forEach(row => {
+                const desc = (row[t.descKey] || '').substring(0, 60);
+                el.innerHTML += `<div class="admin-item-card">
+                    <div class="item-info"><h4>${row[t.titleKey]}</h4><p>${desc}...</p></div>
+                    <div class="admin-item-actions">
+                        <button class="admin-btn admin-btn-danger" onclick="deleteItem('${t.table}', '${row.id}')"><i class="fas fa-trash"></i></button>
+                    </div>
+                </div>`;
+            });
+        }
+    }
+
+    async function loadRegistrations() {
+        const { data, error } = await sb.from('registrations').select('*').order('created_at', { ascending: false });
+        const el = document.getElementById('registrationsList');
+        const countEl = document.getElementById('regCount');
+        if (error || !data) { el.innerHTML = '<p style="color:#EF4444;">שגיאה בטעינת נרשמים</p>'; return; }
+        countEl.textContent = `סה"כ ${data.length} נרשמים`;
+        if (data.length === 0) { el.innerHTML = '<p style="color:var(--gray-500);">אין נרשמים עדיין</p>'; return; }
+        el.innerHTML = `<table style="width:100%;border-collapse:collapse;font-size:0.85rem;">
+            <thead><tr style="background:var(--light-bg);text-align:right;">
+                <th style="padding:10px;border-bottom:2px solid var(--gray-200);">שם</th>
+                <th style="padding:10px;border-bottom:2px solid var(--gray-200);">אימייל</th>
+                <th style="padding:10px;border-bottom:2px solid var(--gray-200);">טלפון</th>
+                <th style="padding:10px;border-bottom:2px solid var(--gray-200);">מוסד</th>
+                <th style="padding:10px;border-bottom:2px solid var(--gray-200);">תפקיד</th>
+                <th style="padding:10px;border-bottom:2px solid var(--gray-200);">סדנה</th>
+                <th style="padding:10px;border-bottom:2px solid var(--gray-200);">ימים</th>
+                <th style="padding:10px;border-bottom:2px solid var(--gray-200);">שעות</th>
+                <th style="padding:10px;border-bottom:2px solid var(--gray-200);">הערות</th>
+                <th style="padding:10px;border-bottom:2px solid var(--gray-200);">תאריך</th>
+                <th style="padding:10px;border-bottom:2px solid var(--gray-200);">פעולות</th>
+            </tr></thead><tbody>${data.map(r => `<tr style="border-bottom:1px solid var(--gray-200);">
+                <td style="padding:8px;">${r.full_name}</td>
+                <td style="padding:8px;"><a href="mailto:${r.email}">${r.email}</a></td>
+                <td style="padding:8px;">${r.phone || ''}</td>
+                <td style="padding:8px;">${r.institution || ''}</td>
+                <td style="padding:8px;">${r.role || ''}</td>
+                <td style="padding:8px;">${r.interest || ''}</td>
+                <td style="padding:8px;">${r.preferred_days || ''}</td>
+                <td style="padding:8px;">${r.preferred_hours || ''}</td>
+                <td style="padding:8px;">${r.message || ''}</td>
+                <td style="padding:8px;white-space:nowrap;">${new Date(r.created_at).toLocaleDateString('he-IL')}</td>
+                <td style="padding:8px;"><button class="admin-btn admin-btn-danger" style="padding:4px 8px;font-size:0.75rem;" onclick="deleteRegistration('${r.id}')"><i class="fas fa-trash"></i></button></td>
+            </tr>`).join('')}</tbody></table>`;
+    }
+
+    async function deleteRegistration(id) {
+        if (!confirm('למחוק רישום זה?')) return;
+        await sb.from('registrations').delete().eq('id', id);
+        await loadRegistrations();
+    }
+
+    function exportRegistrations() {
+        const table = document.querySelector('#registrationsList table');
+        if (!table) { alert('אין נתונים לייצוא'); return; }
+        const rows = table.querySelectorAll('tr');
+        let csv = '﻿'; // BOM for Hebrew in Excel
+        rows.forEach(row => {
+            const cells = row.querySelectorAll('th, td');
+            const line = Array.from(cells).slice(0, -1).map(c => '"' + c.textContent.replace(/"/g, '""') + '"').join(',');
+            csv += line + '\n';
+        });
+        const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+        const a = document.createElement('a');
+        a.href = URL.createObjectURL(blob);
+        a.download = 'registrations_' + new Date().toISOString().slice(0,10) + '.csv';
+        a.click();
+    }
+
+    async function deleteItem(table, id) {
+        if (!confirm('למחוק פריט זה?')) return;
+        await sb.from(table).delete().eq('id', id);
+        await refreshAdminLists();
+        await loadAllContent();
+    }
+
+    // ===== ADD FUNCTIONS (SUPABASE) =====
+    async function addWorkshop() {
+        const title = document.getElementById('newWorkshopName').value;
+        const description = document.getElementById('newWorkshopDesc').value;
+        const duration = document.getElementById('newWorkshopDuration').value || null;
+        const badge = document.getElementById('newWorkshopBadge').value || null;
+        const image = document.getElementById('newWorkshopImg').value || ['1.png','2.png','3.png','4.png','5.png','6.png'][Math.floor(Math.random()*6)];
+        if (!title) return alert('נא להזין שם סדנה');
+
+        const { data: maxOrder } = await sb.from('workshops').select('sort_order').order('sort_order', { ascending: false }).limit(1);
+        const sort_order = (maxOrder?.[0]?.sort_order || 0) + 1;
+
+        await sb.from('workshops').insert({ title, description, duration, badge, image, sort_order });
+        document.getElementById('newWorkshopName').value = '';
+        document.getElementById('newWorkshopDesc').value = '';
+        document.getElementById('newWorkshopDuration').value = '';
+        document.getElementById('newWorkshopImg').value = '';
+        showSavedMsg('workshop-saved');
+        await refreshAdminLists();
+        await loadWorkshops();
+        initFadeIn();
+    }
+
+    async function addLibraryItem() {
+        const title = document.getElementById('newLibName').value;
+        const category = document.getElementById('newLibCategory').value;
+        const file_type = document.getElementById('newLibType').value;
+        const file_url = document.getElementById('newLibUrl').value || null;
+        if (!title) return alert('נא להזין שם פריט');
+
+        const { data: maxOrder } = await sb.from('library_items').select('sort_order').order('sort_order', { ascending: false }).limit(1);
+        const sort_order = (maxOrder?.[0]?.sort_order || 0) + 1;
+
+        await sb.from('library_items').insert({ title, category, file_type, file_url, sort_order });
+        document.getElementById('newLibName').value = '';
+        document.getElementById('newLibUrl').value = '';
+        showSavedMsg('library-saved');
+        await refreshAdminLists();
+        await loadLibrary();
+        initFadeIn();
+    }
+
+    async function addInnovation() {
+        const title = document.getElementById('newInnoTitle').value;
+        const description = document.getElementById('newInnoDesc').value;
+        const label = document.getElementById('newInnoLabel').value;
+        const link = document.getElementById('newInnoLink').value || '#';
+        const image = document.getElementById('newInnoImg').value || ['1.png','2.png','3.png','4.png','5.png','6.png'][Math.floor(Math.random()*6)];
+        if (!title) return alert('נא להזין כותרת');
+
+        const { data: maxOrder } = await sb.from('innovations').select('sort_order').order('sort_order', { ascending: false }).limit(1);
+        const sort_order = (maxOrder?.[0]?.sort_order || 0) + 1;
+
+        await sb.from('innovations').insert({ title, description, label, link, image, sort_order });
+        document.getElementById('newInnoTitle').value = '';
+        document.getElementById('newInnoDesc').value = '';
+        document.getElementById('newInnoImg').value = '';
+        document.getElementById('newInnoLink').value = '';
+        showSavedMsg('innovation-saved');
+        await refreshAdminLists();
+        await loadInnovations();
+        initFadeIn();
+    }
+
+    async function addVoice() {
+        const quote = document.getElementById('newVoiceQuote').value;
+        const author_name = document.getElementById('newVoiceName').value;
+        const author_role = document.getElementById('newVoiceRole').value;
+        if (!quote || !author_name) return alert('נא למלא ציטוט ושם');
+
+        const { data: maxOrder } = await sb.from('voices').select('sort_order').order('sort_order', { ascending: false }).limit(1);
+        const sort_order = (maxOrder?.[0]?.sort_order || 0) + 1;
+
+        await sb.from('voices').insert({ quote, author_name, author_role, sort_order });
+        document.getElementById('newVoiceQuote').value = '';
+        document.getElementById('newVoiceName').value = '';
+        document.getElementById('newVoiceRole').value = '';
+        showSavedMsg('voices-saved');
+        await refreshAdminLists();
+        await loadVoices();
+        initFadeIn();
+    }
+
+    async function addGoal() {
+        const title = document.getElementById('newGoalTitle').value;
+        const description = document.getElementById('newGoalDesc').value;
+        const icon = document.getElementById('newGoalIcon').value;
+        if (!title) return alert('נא להזין כותרת מטרה');
+
+        const { data: maxOrder } = await sb.from('goals').select('sort_order').order('sort_order', { ascending: false }).limit(1);
+        const sort_order = (maxOrder?.[0]?.sort_order || 0) + 1;
+
+        await sb.from('goals').insert({ title, description, icon, sort_order });
+        document.getElementById('newGoalTitle').value = '';
+        document.getElementById('newGoalDesc').value = '';
+        showSavedMsg('goals-saved');
+        await refreshAdminLists();
+        await loadGoals();
+        initFadeIn();
+    }
+
+    // ===== INIT =====
+    document.addEventListener('DOMContentLoaded', async () => {
+        await loadAllContent();
+        await checkAuth();
+    });
+</script>
+
+</body>
+</html>
