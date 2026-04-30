@@ -2026,6 +2026,23 @@
         document.getElementById('libSrcFile').style.opacity = src === 'file' ? '1' : '0.5';
     }
 
+    async function uploadToStorage(file) {
+        const ext = file.name.split('.').pop();
+        const fileName = `${Date.now()}_${Math.random().toString(36).substr(2,6)}.${ext}`;
+        try {
+            const { data, error } = await sb.storage.from('library-files').upload(fileName, file, {
+                cacheControl: '3600',
+                upsert: false
+            });
+            if (error) throw error;
+            const { data: urlData } = sb.storage.from('library-files').getPublicUrl(fileName);
+            return urlData.publicUrl;
+        } catch (err) {
+            console.error('Storage upload failed:', err);
+            throw err;
+        }
+    }
+
     async function addLibraryItem() {
         const title = document.getElementById('newLibName').value;
         const category = document.getElementById('newLibCategory').value;
@@ -2033,32 +2050,41 @@
         if (!title) return alert('נא להזין שם פריט');
 
         let file_url = null;
+        const saveBtn = document.querySelector('#library-add-form .admin-btn-success');
+        const origText = saveBtn.innerHTML;
 
-        if (libSource === 'file') {
-            const fileInput = document.getElementById('newLibFile');
-            const file = fileInput.files[0];
-            if (!file) return alert('נא לבחור קובץ להעלאה');
-            const ext = file.name.split('.').pop();
-            const fileName = `${Date.now()}_${Math.random().toString(36).substr(2,6)}.${ext}`;
-            const { data: uploadData, error: uploadErr } = await sb.storage.from('library-files').upload(fileName, file);
-            if (uploadErr) return alert('שגיאה בהעלאת הקובץ: ' + uploadErr.message);
-            const { data: urlData } = sb.storage.from('library-files').getPublicUrl(fileName);
-            file_url = urlData.publicUrl;
-        } else {
-            file_url = document.getElementById('newLibUrl').value || null;
+        try {
+            if (libSource === 'file') {
+                const fileInput = document.getElementById('newLibFile');
+                const file = fileInput.files[0];
+                if (!file) return alert('נא לבחור קובץ להעלאה');
+                saveBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> מעלה קובץ...';
+                saveBtn.disabled = true;
+                file_url = await uploadToStorage(file);
+            } else {
+                file_url = document.getElementById('newLibUrl').value || null;
+            }
+
+            const { data: maxOrder } = await sb.from('library_items').select('sort_order').order('sort_order', { ascending: false }).limit(1);
+            const sort_order = (maxOrder?.[0]?.sort_order || 0) + 1;
+
+            const { error: insertErr } = await sb.from('library_items').insert({ title, category, file_type, file_url, sort_order });
+            if (insertErr) throw insertErr;
+
+            document.getElementById('newLibName').value = '';
+            document.getElementById('newLibUrl').value = '';
+            if (document.getElementById('newLibFile')) document.getElementById('newLibFile').value = '';
+            showSavedMsg('library-saved');
+            await refreshAdminLists();
+            await loadLibrary();
+            initFadeIn();
+        } catch (err) {
+            alert('שגיאה: ' + (err.message || 'לא ניתן לשמור את הפריט'));
+            console.error('addLibraryItem error:', err);
+        } finally {
+            saveBtn.innerHTML = origText;
+            saveBtn.disabled = false;
         }
-
-        const { data: maxOrder } = await sb.from('library_items').select('sort_order').order('sort_order', { ascending: false }).limit(1);
-        const sort_order = (maxOrder?.[0]?.sort_order || 0) + 1;
-
-        await sb.from('library_items').insert({ title, category, file_type, file_url, sort_order });
-        document.getElementById('newLibName').value = '';
-        document.getElementById('newLibUrl').value = '';
-        if (document.getElementById('newLibFile')) document.getElementById('newLibFile').value = '';
-        showSavedMsg('library-saved');
-        await refreshAdminLists();
-        await loadLibrary();
-        initFadeIn();
     }
 
     async function addInnovation() {
