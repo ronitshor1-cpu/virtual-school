@@ -120,7 +120,8 @@
         .admin-close { background: rgba(255,255,255,0.15); border: none; color: white; width: 40px; height: 40px; border-radius: 50%; font-size: 18px; cursor: pointer; transition: background 0.3s; }
         .admin-close:hover { background: rgba(255,255,255,0.3); }
         .admin-tabs {
-            display: flex; background: var(--gray-50); border-bottom: 1px solid var(--gray-200); overflow-x: auto;
+            display: flex !important; background: var(--gray-50); border-bottom: 1px solid var(--gray-200); overflow-x: auto;
+            position: sticky; top: 0; z-index: 10; flex-shrink: 0;
         }
         .admin-tab {
             padding: 14px 24px; font-size: 0.9rem; font-weight: 600; color: var(--gray-500);
@@ -1831,16 +1832,14 @@
     function updateAdminUI() {
         const loginSection = document.getElementById('admin-login-section');
         const contentSections = document.getElementById('admin-content-sections');
-        const tabsEl = document.querySelector('.admin-tabs');
         if (isAdmin) {
             if (loginSection) loginSection.style.display = 'none';
             if (contentSections) contentSections.style.display = 'block';
-            if (tabsEl) tabsEl.style.display = 'flex';
         } else {
             if (loginSection) loginSection.style.display = 'block';
             if (contentSections) contentSections.style.display = 'none';
-            if (tabsEl) tabsEl.style.display = 'none';
         }
+        // Tabs are always visible via CSS !important
     }
 
     async function adminLogin() {
