@@ -128,6 +128,8 @@
             border-bottom: 3px solid transparent; transition: all 0.3s; font-family: 'Heebo', sans-serif;
         }
         .admin-tab.active, .admin-tab:hover { color: var(--blue); border-bottom-color: var(--blue); background: white; }
+        .admin-tab-home { padding: 14px 18px; border-left: 1px solid var(--gray-200); font-size: 1.1rem; }
+        .admin-tab-home.active { background: var(--blue); color: white !important; border-radius: 0; }
         .admin-body { padding: 30px; overflow-y: auto; flex: 1; }
         .admin-section { display: none; }
         .admin-section.active { display: block; }
@@ -1321,8 +1323,9 @@
             <h2><i class="fas fa-shield-alt"></i> פאנל ניהול תוכן</h2>
             <button class="admin-close" onclick="closeAdmin()"><i class="fas fa-times"></i></button>
         </div>
-        <div class="admin-tabs">
-            <button class="admin-tab active" onclick="switchAdminTab('workshops-admin', this)"><i class="fas fa-flask"></i> סדנאות</button>
+        <div class="admin-tabs" id="adminTabs">
+            <button class="admin-tab admin-tab-home active" onclick="switchAdminTab('workshops-admin', this)" title="בית"><i class="fas fa-home"></i></button>
+            <button class="admin-tab" onclick="switchAdminTab('workshops-admin', this)"><i class="fas fa-flask"></i> סדנאות</button>
             <button class="admin-tab" onclick="switchAdminTab('library-admin', this)"><i class="fas fa-book"></i> ספרייה</button>
             <button class="admin-tab" onclick="switchAdminTab('innovation-admin', this)"><i class="fas fa-globe"></i> חדשנות</button>
             <button class="admin-tab" onclick="switchAdminTab('voices-admin', this)"><i class="fas fa-comments"></i> קולות</button>
@@ -1434,8 +1437,22 @@
                         </div>
                     </div>
                     <div class="admin-form-group">
-                        <label>קישור לקובץ (URL)</label>
-                        <input type="text" id="newLibUrl" placeholder="https://drive.google.com/...">
+                        <label>מקור הקובץ</label>
+                        <div style="display:flex; gap:10px; margin-bottom:10px;">
+                            <button type="button" class="admin-btn admin-btn-primary" id="libSrcUrl" onclick="toggleLibSource('url')" style="flex:1; opacity:1;">
+                                <i class="fas fa-link"></i> קישור URL
+                            </button>
+                            <button type="button" class="admin-btn admin-btn-primary" id="libSrcFile" onclick="toggleLibSource('file')" style="flex:1; opacity:0.5;">
+                                <i class="fas fa-upload"></i> העלאת קובץ
+                            </button>
+                        </div>
+                        <div id="libUrlInput">
+                            <input type="text" id="newLibUrl" placeholder="https://drive.google.com/...">
+                        </div>
+                        <div id="libFileInput" style="display:none;">
+                            <input type="file" id="newLibFile" accept=".pdf,.pptx,.docx,.mp4,.png,.jpg,.jpeg" style="padding:8px; border:2px dashed var(--gray-200); border-radius:8px; width:100%; cursor:pointer;">
+                            <p style="font-size:0.8rem; color:var(--gray-500); margin-top:4px;">PDF, PPTX, DOCX, MP4 — עד 50MB</p>
+                        </div>
                     </div>
                     <button class="admin-btn admin-btn-success admin-btn-large" onclick="addLibraryItem()">
                         <i class="fas fa-check"></i> שמור פריט
@@ -1558,7 +1575,7 @@
                 <h3 style="margin-bottom:16px; color: var(--gray-900);">נרשמים לסדנאות</h3>
                 <div style="margin-bottom:16px; display:flex; gap:10px; align-items:center; flex-wrap:wrap;">
                     <button class="admin-btn admin-btn-primary" onclick="loadRegistrations()"><i class="fas fa-sync"></i> רענון</button>
-                    <button class="admin-btn" onclick="exportRegistrations()" style="background:var(--blue);color:white;"><i class="fas fa-download"></i> ייצוא CSV</button>
+                    <button class="admin-btn" onclick="exportRegistrationsXlsx()" style="background:var(--blue);color:white;"><i class="fas fa-file-excel"></i> ייצוא Excel</button>
                     <span id="regCount" style="color:var(--gray-500); font-size:0.9rem;"></span>
                 </div>
                 <div id="registrationsList" style="overflow-x:auto;"></div>
@@ -1571,6 +1588,7 @@
 
 <!-- ===== SUPABASE SDK ===== -->
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 
 <!-- ===== JAVASCRIPT ===== -->
 <script>
@@ -1709,7 +1727,7 @@
                     </div>
                 </div>
             </div>`;
-            select.innerHTML += `<option value="${w.id}">${w.title}</option>`;
+            select.innerHTML += `<option value="${w.title}">${w.title}</option>`;
         });
     }
 
@@ -1737,12 +1755,16 @@
         const icons = { plans: 'fa-file-alt', presentations: 'fa-file-powerpoint', guides: 'fa-file-pdf' };
         const catNames = { plans: 'מערך שיעור', presentations: 'מצגת', guides: 'מדריך' };
         data.forEach(item => {
+            const hasLink = item.file_url && item.file_url.trim() !== '';
+            const wrapper = hasLink ? `<a href="${item.file_url}" target="_blank" rel="noopener" style="text-decoration:none; color:inherit; display:block;">` : '';
+            const wrapperEnd = hasLink ? '</a>' : '';
             grid.innerHTML += `
-            <div class="library-item fade-in" data-category="${item.category}" data-id="${item.id}">
+            ${wrapper}<div class="library-item fade-in" data-category="${item.category}" data-id="${item.id}" style="${hasLink ? 'cursor:pointer;' : ''}">
                 <div class="file-icon"><i class="fas ${icons[item.category] || 'fa-file'}"></i></div>
                 <h4>${item.title}</h4>
                 <span class="file-type">${item.file_type} &bull; ${catNames[item.category] || item.category}</span>
-            </div>`;
+                ${hasLink ? '<span style="display:block;margin-top:8px;font-size:0.8rem;color:var(--primary);"><i class="fas fa-download"></i> לחצו לפתיחה</span>' : ''}
+            </div>${wrapperEnd}`;
         });
     }
 
@@ -1943,21 +1965,25 @@
         await loadRegistrations();
     }
 
-    function exportRegistrations() {
+    function exportRegistrationsXlsx() {
         const table = document.querySelector('#registrationsList table');
         if (!table) { alert('אין נתונים לייצוא'); return; }
-        const rows = table.querySelectorAll('tr');
-        let csv = '﻿'; // BOM for Hebrew in Excel
-        rows.forEach(row => {
-            const cells = row.querySelectorAll('th, td');
-            const line = Array.from(cells).slice(0, -1).map(c => '"' + c.textContent.replace(/"/g, '""') + '"').join(',');
-            csv += line + '\n';
-        });
-        const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
-        const a = document.createElement('a');
-        a.href = URL.createObjectURL(blob);
-        a.download = 'registrations_' + new Date().toISOString().slice(0,10) + '.csv';
-        a.click();
+        const wb = XLSX.utils.book_new();
+        const ws = XLSX.utils.table_to_sheet(table, { raw: true });
+        // Remove last column (actions) from each row
+        const range = XLSX.utils.decode_range(ws['!ref']);
+        for (let R = range.s.r; R <= range.e.r; R++) {
+            delete ws[XLSX.utils.encode_cell({ r: R, c: range.e.c })];
+        }
+        range.e.c--;
+        ws['!ref'] = XLSX.utils.encode_range(range);
+        // Set column widths
+        ws['!cols'] = [
+            { wch: 18 }, { wch: 25 }, { wch: 14 }, { wch: 20 }, { wch: 14 },
+            { wch: 30 }, { wch: 16 }, { wch: 16 }, { wch: 25 }, { wch: 12 }
+        ];
+        XLSX.utils.book_append_sheet(wb, ws, 'נרשמים');
+        XLSX.writeFile(wb, 'registrations_' + new Date().toISOString().slice(0, 10) + '.xlsx');
     }
 
     async function deleteItem(table, id) {
@@ -1990,12 +2016,37 @@
         initFadeIn();
     }
 
+    let libSource = 'url'; // 'url' or 'file'
+
+    function toggleLibSource(src) {
+        libSource = src;
+        document.getElementById('libUrlInput').style.display = src === 'url' ? 'block' : 'none';
+        document.getElementById('libFileInput').style.display = src === 'file' ? 'block' : 'none';
+        document.getElementById('libSrcUrl').style.opacity = src === 'url' ? '1' : '0.5';
+        document.getElementById('libSrcFile').style.opacity = src === 'file' ? '1' : '0.5';
+    }
+
     async function addLibraryItem() {
         const title = document.getElementById('newLibName').value;
         const category = document.getElementById('newLibCategory').value;
         const file_type = document.getElementById('newLibType').value;
-        const file_url = document.getElementById('newLibUrl').value || null;
         if (!title) return alert('נא להזין שם פריט');
+
+        let file_url = null;
+
+        if (libSource === 'file') {
+            const fileInput = document.getElementById('newLibFile');
+            const file = fileInput.files[0];
+            if (!file) return alert('נא לבחור קובץ להעלאה');
+            const ext = file.name.split('.').pop();
+            const fileName = `${Date.now()}_${Math.random().toString(36).substr(2,6)}.${ext}`;
+            const { data: uploadData, error: uploadErr } = await sb.storage.from('library-files').upload(fileName, file);
+            if (uploadErr) return alert('שגיאה בהעלאת הקובץ: ' + uploadErr.message);
+            const { data: urlData } = sb.storage.from('library-files').getPublicUrl(fileName);
+            file_url = urlData.publicUrl;
+        } else {
+            file_url = document.getElementById('newLibUrl').value || null;
+        }
 
         const { data: maxOrder } = await sb.from('library_items').select('sort_order').order('sort_order', { ascending: false }).limit(1);
         const sort_order = (maxOrder?.[0]?.sort_order || 0) + 1;
@@ -2003,6 +2054,7 @@
         await sb.from('library_items').insert({ title, category, file_type, file_url, sort_order });
         document.getElementById('newLibName').value = '';
         document.getElementById('newLibUrl').value = '';
+        if (document.getElementById('newLibFile')) document.getElementById('newLibFile').value = '';
         showSavedMsg('library-saved');
         await refreshAdminLists();
         await loadLibrary();
